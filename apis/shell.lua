@@ -27,7 +27,7 @@ function funcs.run(program, args)
         if PATH[program] then
             require(PATH[program])(table.unpack(args))
         elseif fs.exists(shellDir:gsub("%/$", "") .. "/" .. program .. ".lua") then
-            require(shellDir:gsub("%/$", "") .. "/" .. program)(args)
+            require(shellDir:gsub("%/$", "") .. "/" .. program)(table.unpack(args))
         else
             error("___NO_FILE___")
         end
