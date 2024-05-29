@@ -32,9 +32,9 @@ while true do
         elseif program == "exit" then
             return
         elseif program == "help" then
-            tmpShell.help()
+            shell.help()
         else
-            local success, message = pcall(tmpShell.run, program, args)
+            local success, message = pcall(shell.run, program, args)
         
             if not success then
                 if message:find("___NO_FILE___") then
