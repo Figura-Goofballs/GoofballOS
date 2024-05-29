@@ -27,11 +27,7 @@ function funcs.setDir(dir)
         end
     end
 
-    shellDir = shellDir:gsub("[%w]*%/..%/", "/"):gsub("%/.%/", "/"):gsub("[%w]*%/..$", "/"):gsub("%/.$", "/")
-
-    if not shellDir:find("^%/$") then
-        shellDir = shellDir:gsub("%/$", "")
-    end
+    shellDir = fs.combine(shellDir)
 end
 
 function funcs.help()
