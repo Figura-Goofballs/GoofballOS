@@ -27,7 +27,7 @@ function funcs.setDir(dir)
         end
     end
 
-    shellDir = fs.combine(shellDir) -- normalize
+    shellDir = "/" .. fs.combine(shellDir) -- normalize
 end
 
 function funcs.help()
