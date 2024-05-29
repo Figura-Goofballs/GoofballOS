@@ -1,9 +1,9 @@
 return function(path, dest)
     if not path:find("^%/") then
-        path = shell.dir():gsub("%/$", "") .. "/" .. path
+        path = fs.combine(shell.dir(), path)
     end
     if not dest:find("^%/") then
-        dest = shell.dir():gsub("%/$", "") .. "/" .. dest
+        dest = fs.combine(shell.dir(), dest)
     end
 
     if not (path and dest) then

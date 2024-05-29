@@ -1,6 +1,6 @@
 return function(path)
     if not path:find("^%/") then
-        path = shell.dir():gsub("%/$", "") .. "/" .. path
+        path = fs.combine(shell.dir(), path)
     end
 
     if not path then

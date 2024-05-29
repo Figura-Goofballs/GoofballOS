@@ -20,14 +20,14 @@ function funcs.setDir(dir)
             error("Directory doesn't exist")
         end
     else
-        if fs.isDir(shellDir:gsub("%/$", "") .. "/" .. dir) then
-            shellDir = shellDir:gsub("%/$", "") .. "/" .. dir
+        if fs.isDir(fs.combine(shell.dir(), dir)) then
+            shellDir = fs.combine(shell.dir(), dir)
         else
             error("Directory doesn't exist")
         end
     end
 
-    shellDir = fs.combine(shellDir)
+    shellDir = fs.combine(shellDir) -- normalize
 end
 
 function funcs.help()
