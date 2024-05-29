@@ -1,4 +1,11 @@
 return function(path, dest)
+    if not path:find("^%/") then
+        path = shell.dir():gsub("%/$", "") .. "/" .. path
+    end
+    if not dest:find("^%/") then
+        dest = shell.dir():gsub("%/$", "") .. "/" .. dest
+    end
+
     if not (path and dest) then
         error("Please specify both a file/directory and destination")
     end

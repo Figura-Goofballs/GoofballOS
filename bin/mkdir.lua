@@ -1,4 +1,8 @@
 return function(path)
+    if not path:find("^%/") then
+        path = shell.dir():gsub("%/$", "") .. "/" .. path
+    end
+
     if not path then
         error("Please specify a directory")
     end

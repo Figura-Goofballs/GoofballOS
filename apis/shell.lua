@@ -1,6 +1,6 @@
 local funcs = {}
 
-local shellDir = "/"
+local shellDir = "/home/user"
 
 local PATH = {}
 for k, v in pairs(fs.list("/bin")) do
@@ -9,6 +9,28 @@ for k, v in pairs(fs.list("/bin")) do
 
         PATH[v] = "/bin/" .. v
         print("Adding " .. v .. " to path")
+    end
+end
+
+function funcs.setDir(dir)
+    if dir:find("^%/") then
+        if fs.isDir(dir) then
+            shellDir = dir
+        else
+            error("Directory doesn't exist")
+        end
+    else
+        if fs.isDir(shellDir:gsub("%/$", "") .. "/" .. dir) then
+            shellDir = shellDir:gsub("%/$", "") .. "/" .. dir
+        else
+            error("Directory doesn't exist")
+        end
+    end
+
+    shellDir = shellDir:gsub("[%w]*%/..%/", "/"):gsub("%/.%/", "/"):gsub("[%w]*%/..$", "/"):gsub("%/.$", "/")
+
+    if not shellDir:find("^%/$") then
+        shellDir = shellDir:gsub("%/$", "")
     end
 end
 
