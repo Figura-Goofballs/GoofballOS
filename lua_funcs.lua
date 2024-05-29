@@ -12,11 +12,11 @@ function print(...)
     local tbl = table.pack(...)
 
     for i = 1, tbl.n do
-        io.stdout._handle.write(tostring(tbl[i]))
+        write(tostring(tbl[i]))
         if i < tbl.n then
-            io.stdout._handle.write("    ")
+            write("    ")
         end
     end
     
-    io.stdout._handle.write("\n")
+    write("\n")
 end

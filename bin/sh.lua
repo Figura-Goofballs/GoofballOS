@@ -10,7 +10,7 @@ print("THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 print()
 
 while true do
-    io.stdout._handle.write(shell.dir() .. "$ ")
+    write(shell.dir() .. "$ ")
 
     local input = io.read()
 
