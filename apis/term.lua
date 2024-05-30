@@ -7,11 +7,11 @@ local function wrap(_function)
     end
 end
 
-local term = _ENV
+local _term = term
 
-term.redirect = function(target)
-    expect(1, target, "table")
-    if target == term or target == _G.term then
+_term.redirect = function(target)
+    if type(target) ~= "table" then error("expected table") end
+    if target == _term or target == _G.term then
         error("term is not a recommended redirect target, try term.current() instead", 2)
     end
     for k, v in pairs(native_term) do
@@ -24,27 +24,28 @@ term.redirect = function(target)
         end
     end
     local oldRedirectTarget = redirectTarget
+    
     redirectTarget = target
     return oldRedirectTarget
 end
 
-function term.current()
+function _term.current()
     return redirectTarget
 end
 
-function term.native()
+function _term.native()
     return native_term
 end
 
 for _, method in ipairs { "nativePaletteColor", "nativePaletteColour" } do
-    term[method] = native_term[method]
+    _term[method] = native_term[method]
     native_term[method] = nil
 end
 
 for k, v in pairs(native_term) do
-    if type(k) == "string" and type(v) == "function" and rawget(term, k) == nil then
-        term[k] = wrap(k)
+    if type(k) == "string" and type(v) == "function" and rawget(_term, k) == nil then
+        _term[k] = wrap(k)
     end
 end
 
-return term
+return _term
