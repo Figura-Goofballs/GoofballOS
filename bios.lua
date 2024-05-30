@@ -86,6 +86,84 @@ function write(sText)
         end
     end
 end
+print(read)
+-- History and completion func exists here for backwards compatibility, they do nothing right now
+function read(replChar, history, completionFunc, default, maxLength)
+    local blink = term.getCursorBlink()
+    term.setCursorBlink(true)
+
+    maxLength = maxLength or 999999999
+
+    local height, width = term.getSize()
+    local x, y = term.getCursorPos()
+
+    local whitespaceCount = 0
+
+    local inText = ""
+
+    if default then
+        inText = default
+    end
+
+    if replChar then
+        write(replChar:rep(#inText))
+    else
+        write(inText)
+    end
+
+    local reading = true
+    while reading do
+        local width, height = term.getSize()
+
+        local event, param = os.pullEvent()
+
+        if event == "key" then
+            if (param == keys.enter or param == keys.numPadEnter) then
+                term.setCursorBlink(blink)
+                return inText
+            elseif param == keys.backspace then
+                if #inText > 0 then
+                    inText = inText:gsub(".$", "")
+                    whitespaceCount = whitespaceCount + 1
+                end
+            end
+        elseif event == "paste" then
+            inText = inText .. param
+        elseif event == "char" then
+            inText = inText .. param
+
+            if whitespaceCount > 0 then
+                whitespaceCount = whitespaceCount - 1
+            end
+        end
+
+        term.setCursorPos(x, y)
+        local startWritePos = #inText - width + x
+        local endWritePos = #inText
+
+        if startWritePos < 0 then
+            startWritePos = 0
+        elseif endWritePos + x >= width then
+            startWritePos = startWritePos + 1
+        end
+
+        while endWritePos - maxLength >= startWritePos do
+            startWritePos = startWritePos + 1
+        end
+
+        local outText = (inText):sub(startWritePos, endWritePos)
+
+        if replChar then
+            outText = replChar:rep(#outText)
+        end
+
+        term.write(outText)
+
+        local x2, y2 = term.getCursorPos()
+        term.write((" "):rep(whitespaceCount))
+        term.setCursorPos(x2, y2)
+    end
+end
 
 function print(...)
     local tbl = {...}
@@ -150,6 +228,11 @@ function sleep(nTime)
         local _, param = os.pullEvent("timer")
     until param == timer
 end
+
+os.loadAPI = nil
+os.unloadAPI = nil
+
+os.sleep = sleep
 
 fs = require("/apis/fs")
 shell = require("/apis/shell")

@@ -6,5 +6,5 @@ return function(...)
         str = str .. tbl[i] .. " "
     end
 
-    loadstring(str)()
+    load(str)()
 end
