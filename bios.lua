@@ -5,3 +5,4 @@ debugMode = true
 
 require("lua_funcs")
 shell = require("/apis/shell")
+fs = require("/apis/fs")
