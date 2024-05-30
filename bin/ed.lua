@@ -5,7 +5,7 @@ return function(...)
   local err = "ok"
   local pth, buf, cur = "", {}, 1
   if ... then
-    pth = ...
+    pth = fs.combine(shell.dir(), ...)
     local fd = fs.open(pth, "r")
     if type(fd) == "table" then
       local line, siz = fd.readLine(), 0
