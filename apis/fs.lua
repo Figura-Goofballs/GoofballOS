@@ -69,3 +69,5 @@ function fs.find(pattern)
     find("", segments, 1, out)
     return out
 end
+
+return fs
