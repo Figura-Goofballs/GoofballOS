@@ -8,15 +8,28 @@ function string.split(str, on)
     return result
 end
 
+function expect(index, target, type)
+    if type(target) ~= "type" then
+        error("Invalid argument " .. index .. " type")
+    end
+end
+
 function print(...)
     local tbl = table.pack(...)
 
     for i = 1, tbl.n do
-        write(tostring(tbl[i]))
+        term.write(tostring(tbl[i]))
         if i < tbl.n then
-            write("    ")
+            term.write("    ")
         end
     end
     
-    write("\n")
+    term.write("\n")
+end
+
+function printError(...)
+    local oldColor = term.getTextColor()
+    term.setTextColor(colors.red)
+    print(...)
+    term.setTextColor(oldColor)
 end
