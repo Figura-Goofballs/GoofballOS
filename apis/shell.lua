@@ -1,6 +1,6 @@
 local funcs = {}
 
-local shellDir = "/"
+local shellDir = "/home/user"
 
 local PATH = {}
 for k, v in pairs(fs.list("/bin")) do
@@ -10,6 +10,24 @@ for k, v in pairs(fs.list("/bin")) do
         PATH[v] = "/bin/" .. v
         print("Adding " .. v .. " to path")
     end
+end
+
+function funcs.setDir(dir)
+    if dir:find("^%/") then
+        if fs.isDir(dir) then
+            shellDir = dir
+        else
+            error("Directory doesn't exist")
+        end
+    else
+        if fs.isDir(fs.combine(shell.dir(), dir)) then
+            shellDir = fs.combine(shell.dir(), dir)
+        else
+            error("Directory doesn't exist")
+        end
+    end
+
+    shellDir = "/" .. fs.combine(shellDir) -- normalize
 end
 
 function funcs.help()
@@ -27,7 +45,7 @@ function funcs.run(program, args)
         if PATH[program] then
             require(PATH[program])(table.unpack(args))
         elseif fs.exists(shellDir:gsub("%/$", "") .. "/" .. program .. ".lua") then
-            require(shellDir:gsub("%/$", "") .. "/" .. program)(args)
+            require(shellDir:gsub("%/$", "") .. "/" .. program)(table.unpack(args))
         else
             error("___NO_FILE___")
         end
