@@ -1,4 +1,4 @@
-debugMode = true
+debugMode = false
 
 term = require("/apis/term")
 

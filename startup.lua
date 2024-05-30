@@ -9,5 +9,12 @@ if monitor and monitor ~= "" and peripheral.isPresent(monitor) then
     prevTerm = term.redirect(monitor)
 end
 
+if not debugMode then
+    term.clear()
+end
+
+term.setBackgroundColor(colors.black)
+term.setCursorPos(1, 1)
+
 require("/bin/sh")()
 os.shutdown()
