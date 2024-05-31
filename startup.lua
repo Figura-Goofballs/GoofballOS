@@ -1,83 +1,60 @@
 require("bios")
 
-local pEvent = os.pullEvent
-os.pullEvent = os.pullEventRaw
+::askForBootOption::
 
-::passwordInput::
-if fs.exists("/.password") then
-    write("password: ")
-    local pass = read()
-    local file = fs.open("/.password", "r")
+term.clear()
 
-    if (not (pass == file.readAll())) then
-        print("Incorrect password, shutting down")
-        file.close()
-        sleep(1)
-        os.shutdown()
+local opts = {}
+
+for k, v in pairs(fs.list("/boot")) do
+    if not v:find("/") then
+        opts[v:gsub(".lua$", "")] = fs.combine("/boot", v)
+        print("Adding " .. v .. " to boot list")
     end
-    file.close()
-else
-    print("No password exists, what do you want your password to be?")
-
-    local pass = read()
-
-    local file = fs.open("/.password", "w")
-    file.write(pass)
-    file.close()
-
-    goto passwordInput
 end
 
-os.pullEvent = pEvent
-
-print("Please specify monitor name or press enter")
-local monitor = io.read()
-
-if monitor and monitor ~= "" and peripheral.isPresent(monitor) then
-    print("Redirecting to monitor " .. monitor)
-    monitor = peripheral.wrap(monitor)
-    prevTerm = term.redirect(monitor)
-end
-
-xpcall(function ()
-    loadfile("/bin/sh.lua", "t", _ENV)(shell)
-end, function (err)
-    local width, height = term.getSize()
-
-    paintutils.drawFilledBox(1, 1, width, height, colors.blue)
-
-    paintutils.drawPixel(2, 2, colors.white)
-    paintutils.drawPixel(2, 5, colors.white)
-    paintutils.drawLine(4, 3, 4, 4, colors.white)
-    paintutils.drawPixel(5, 2, colors.white)
-    paintutils.drawPixel(5, 5, colors.white)
-
-    term.setBackgroundColor(colors.blue)
-    -- paintUtils.drawLine(7, 3, 27+7, 3, colors.black)
-    term.setCursorPos(8, 3)
-    term.write("An error has occured, error details")
-    -- paintUtils.drawLine(7, 4, 7+18, 4, colors.black)
-    term.setCursorPos(8, 4)
-    term.write("are printed below")
-
-    term.setCursorPos(1, 8)
-    write(err)
-
-    term.setCursorPos(2, height - 1)
-    write("Press any key to restart")
-
-    while true do
-        os.pullEvent("key")
-
-        os.reboot()
+for _, v in pairs({peripheral.find("drive")}) do
+    if v.isDiskPresent(peripheral.getName(v)) then
+        for _, w in pairs(fs.list("/" .. fs.combine(v.getMountPath(peripheral.getName(v)), "/boot"))) do
+            if not w:find("/") then
+                opts[w:gsub(".lua$", "")] = "/" .. fs.combine(v.getMountPath(peripheral.getName(v)), "boot", w)
+                print("Adding " .. w .. " to boot list")
+            end
+        end
     end
-end)
-
-if not debugMode then
-    term.clear()
 end
 
-term.setBackgroundColor(colors.black)
+local iter = 0
+local bootOpts = {}
+
+local loaderName = "GoofyBOOT"
+
+local width, height = term.getSize()
+
+paintutils.drawBox(1, 1, width, height, colors.white)
+term.setCursorPos((width / 2) - (#loaderName / 2), 1)
+term.setTextColor(colors.black)
+write(loaderName)
+paintutils.drawFilledBox(2, 2, width - 1, height - 1, colors.black)
+term.setTextColor(colors.white)
+
+for k, v in pairs(opts) do
+    iter = iter + 1
+    bootOpts[iter] = v
+    term.setCursorPos(4, 2 + iter)
+    write(iter .. ". " .. k)
+end
+
+term.setCursorPos(4, height - 2)
+write("boot option: ")
+
+local option = tonumber(read())
+
+if not option or not bootOpts[option] then
+    goto askForBootOption
+end
+
+term.clear()
 term.setCursorPos(1, 1)
 
-os.shutdown()
+loadfile(bootOpts[option], "t", _ENV)()
