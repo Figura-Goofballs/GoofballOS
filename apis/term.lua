@@ -1,6 +1,8 @@
 local native_term = term.native and term.native() or term
 local redirectTarget = native_term
 
+local mirror = false
+
 local function wrap(_function)
     return function(...)
         return redirectTarget[_function](...)
@@ -29,6 +31,10 @@ function _term.redirect(target)
     return oldRedirectTarget
 end
 
+function _term.mirror(bool)
+    mirror = bool
+end
+
 function _term.current()
     return redirectTarget
 end
@@ -39,14 +45,23 @@ end
 
 function _term.write(text)
     redirectTarget.write(tostring(text))
+    if mirror then
+        native_term.write(tostring(text))
+    end
 end
 
 function _term.clear()
     redirectTarget.clear()
+    if mirror then
+        native_term.clear()
+    end
 end
 
 function _term.setCursorPos(x, y)
     redirectTarget.setCursorPos(x, y)
+    if mirror then
+        native_term.setCursorPos(x, y)
+    end
 end
 
 function _term.getCursorPos()
@@ -55,10 +70,16 @@ end
 
 function _term.scroll(amount)
     redirectTarget.scroll(amount)
+    if mirror then
+        native_term.scroll(amount)
+    end
 end
 
 function _term.setCursorBlink(blink)
     redirectTarget.setCursorBlink(blink)
+    if mirror then
+        native_term.setCursorBlink(tostring(blink))
+    end
 end
 
 function _term.getCursorBlink()
@@ -71,6 +92,9 @@ end
 
 function _term.clearLine()
     redirectTarget.clearLine()
+    if mirror then
+        native_term.clearLine()
+    end
 end
 
 function _term.getTextColor()
@@ -80,6 +104,9 @@ _term.getTextColour = _term.getTextColor
 
 function _term.setTextColor(color)
     redirectTarget.setTextColor(color)
+    if mirror then
+        native_term.setTextColor(color)
+    end
 end
 _term.setTextColour = _term.setTextColor
 
@@ -90,6 +117,9 @@ _term.getBackgroundColour = _term.getBackgroundColor
 
 function _term.setBackgroundColor(color)
     redirectTarget.setBackgroundColor(color)
+    if mirror then
+        native_term.setBackgroundColor(color)
+    end
 end
 _term.setBackgroundColour = _term.setBackgroundColor
 
@@ -100,18 +130,22 @@ _term.isColour = _term.isColor
 
 function _term.blit(text, textColour, backgroundColour)
     redirectTarget.blit(text, textColour, backgroundColour)
+    if mirror then
+        native_term.blit(text, textColour, backgroundColour)
+    end
 end
 
 function _term.setPaletteColor(...)
     redirectTarget.setPaletteColor(...)
+    if mirror then
+        native_term.setPaletteColor(...)
+    end
 end
 _term.setPaletteColour = _term.setPaletteColor
 
 function _term.getPaletteColor(color)
     return redirectTarget.getPaletteColor(color)
 end
-
-
 
 for _, method in ipairs { "nativePaletteColor", "nativePaletteColour" } do
     _term[method] = native_term[method]
