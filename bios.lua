@@ -2,10 +2,6 @@ debugMode = false
 
 term = require("/apis/term")
 
-function os.version()
-    return "GoofballOS v1.0.0"
-end
-
 function os.pullEventRaw(sFilter)
     return coroutine.yield(sFilter)
 end
@@ -235,6 +231,35 @@ os.unloadAPI = nil
 
 os.sleep = sleep
 
-newShell = require("/apis/shell")
-fs = require("/apis/fs")
-shell = newShell.new()
+local pEvent = os.pullEvent
+os.pullEvent = os.pullEventRaw
+
+::passwordInput::
+term.clear()
+term.setCursorPos(1, 1)
+
+if fs.exists("/.password") then
+    write("password: ")
+    local pass = read()
+    local file = fs.open("/.password", "r")
+
+    if (not (pass == file.readAll())) then
+        print("Incorrect password, shutting down")
+        file.close()
+        sleep(1)
+        os.shutdown()
+    end
+    file.close()
+else
+    print("No password exists, what do you want your password to be?")
+
+    local pass = read()
+
+    local file = fs.open("/.password", "w")
+    file.write(pass)
+    file.close()
+
+    goto passwordInput
+end
+
+os.pullEvent = pEvent
