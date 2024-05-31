@@ -1,3 +1,1 @@
-return function(path)
-    shell.setDir(path)
-end
+shell:setDir(table.pack(...)[1])

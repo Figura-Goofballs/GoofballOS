@@ -9,5 +9,12 @@ if monitor and monitor ~= "" and peripheral.isPresent(monitor) then
     prevTerm = term.redirect(monitor)
 end
 
-require("/bin/sh")()
+if not debugMode then
+    term.clear()
+end
+
+term.setBackgroundColor(colors.black)
+term.setCursorPos(1, 1)
+
+loadfile("/bin/sh.lua", "t", _ENV)(shell)
 os.shutdown()
