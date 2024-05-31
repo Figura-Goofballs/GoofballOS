@@ -230,20 +230,17 @@ function funcs.host(x, y, z)
     while true do
         local e, p1, p2, p3, p4, p5 = os.pullEvent("modem_message")
         if e == "modem_message" then
-            -- We received a message from a modem
             local side, channel, replyChannel, message, distance = p1, p2, p3, p4, p5
             if side == modemSide and channel == gps.CHANNEL_GPS and message == "PING" and distance then
-                -- We received a ping message on the GPS channel, send a response
                 modem.transmit(replyChannel, funcs.CHANNEL_GPS, {x, y, z})
 
-                -- Print the number of requests handled
                 numServed = numServed + 1
                 if numServed > 1 then
                     local _, y = term.getCursorPos()
                     term.setCursorPos(1, y - 1)
                 end
 
-                print("Serving request. " .. numServed .. " GPS requests served")
+                print("Serving request. " .. numServed .. " GPS request" .. (numServed > 1 and "s" or "") .. " served")
             end
         end
     end
