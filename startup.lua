@@ -37,11 +37,9 @@ end, function (err)
     write("Press any key to restart")
 
     while true do
-        local event = os.pullEvent()
+        os.pullEvent("key")
 
-        if event == "key" then
-            os.reboot()
-        end
+        os.reboot()
     end
 end)
 
