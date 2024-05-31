@@ -129,6 +129,12 @@
       print(buf[cur])
     end
     goto getcmd
+  elseif id == 110 then
+    -- 'n' command
+    for i, s in pairs(buf) do
+      print(i .. "\t" .. s)
+  end
+  goto getcmd
   else
     err = "Unknown command"
     print "?"
