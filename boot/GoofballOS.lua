@@ -1,6 +1,7 @@
 newShell = require("/apis/shell")
 fs = require("/apis/fs")
 shell = newShell.new()
+--gps = require("/apis/gps")
 
 local pEvent = os.pullEvent
 os.pullEvent = os.pullEventRaw
