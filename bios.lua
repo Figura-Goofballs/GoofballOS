@@ -119,6 +119,7 @@ function read(replChar, history, completionFunc, default, maxLength)
 
         if event == "key" then
             if (param == keys.enter or param == keys.numPadEnter) then
+                write("\n")
                 term.setCursorBlink(blink)
                 return inText
             elseif param == keys.backspace then
