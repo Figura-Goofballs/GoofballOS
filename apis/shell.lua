@@ -32,7 +32,11 @@ function funcs.execute(self, func, ...)
     func(...)
 end
 
-function funcs.run(self, program, args)
+function funcs.run(self, program, args, ...)
+    if type(args) ~= "table" then
+        args = {args, ...}
+    end
+
     local func
     if type(program) == "string" then
         if self.PATH[program] then

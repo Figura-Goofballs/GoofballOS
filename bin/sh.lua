@@ -1,4 +1,4 @@
-local shell = table.pack(...)[1] or shell
+local shell = table.pack(...)[1]
 
 if not debugMode then
     term.clear()
@@ -12,6 +12,8 @@ print(
 print()
 
 fs.makeDir("/home/user")
+
+print(shell, newShell.new())
 
 while true do
     write(shell:dir() .. "$ ")
@@ -32,7 +34,7 @@ while true do
 
     if program and program ~= "" then
         if program == "sh" then
-            shell:run("sh", newShell.new())
+            shell:run("sh", {newShell.new()})
         elseif program == "exit" then
             return
         elseif program == "help" then
