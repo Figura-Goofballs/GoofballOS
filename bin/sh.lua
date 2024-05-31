@@ -1,5 +1,7 @@
-local shell = table.pack(...)[1]
-
+local shell = ...
+-- whiit's debug text that will get cleared if debugMode is false
+-- yeah ik I want to know where it's printed
+-- I want to add a binprobe command that refreshes the path with
 if not debugMode then
     term.clear()
 end
@@ -14,6 +16,11 @@ print()
 fs.makeDir("/home/user")
 
 print(shell, newShell.new())
+
+if not debugMode then
+    term.clear()
+    term.setCursorPos(1, 1)
+end
 
 while true do
     write(shell:dir() .. "$ ")
