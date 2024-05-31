@@ -1,7 +1,7 @@
-return function(str, ...)
-    for _, v in ipairs({...}) do
-        str = str .. " " .. v
-    end
+local str = ""
 
-    print(str)
+for _, v in ipairs({ ... }) do
+    str = str .. " " .. v
 end
+
+print(str)

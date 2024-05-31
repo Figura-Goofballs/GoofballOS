@@ -10,7 +10,7 @@ if monitor and monitor ~= "" and peripheral.isPresent(monitor) then
 end
 
 xpcall(function ()
-    require("/bin/sh")()
+    loadfile("/bin/sh.lua", "t", _ENV)(shell)
 end, function (err)
     local width, height = term.getSize()
 
@@ -44,5 +44,12 @@ end, function (err)
         end
     end
 end)
+
+if not debugMode then
+    term.clear()
+end
+
+term.setBackgroundColor(colors.black)
+term.setCursorPos(1, 1)
 
 os.shutdown()

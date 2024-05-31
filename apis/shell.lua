@@ -1,92 +1,110 @@
 local funcs = {}
 
-local shellDir = "/home/user"
-
-local PATH = {}
-for k, v in pairs(fs.list("/bin")) do
-    if not v:find("/") then
-        v = v:gsub(".lua$", "")
-
-        PATH[v] = "/bin/" .. v
-        print("Adding " .. v .. " to path")
-    end
-end
-
-function funcs.setDir(dir)
+function funcs.setDir(self, dir)
     if dir:find("^%/") then
         if fs.isDir(dir) then
-            shellDir = dir
+            self.shellDir = dir
         else
             error("Directory doesn't exist")
         end
     else
-        if fs.isDir(fs.combine(shell.dir(), dir)) then
-            shellDir = fs.combine(shell.dir(), dir)
+        if fs.isDir(fs.combine(self:dir(), dir)) then
+            self.shellDir = fs.combine(self:dir(), dir)
         else
             error("Directory doesn't exist")
         end
     end
 
-    shellDir = "/" .. fs.combine(shellDir) -- normalize
+    self.shellDir = "/" .. fs.combine(self.shellDir) -- normalize
 end
 
-function funcs.help()
+function funcs.help(self)
     local tbl = {}
-    
-    for k, _ in pairs(PATH) do
+
+    for k, _ in pairs(self.PATH) do
         table.insert(tbl, k)
     end
-    
+
     print(table.unpack(tbl))
 end
 
-function funcs.run(program, args)
+function funcs.execute(self, func, ...)
+    func(...)
+end
+
+function funcs.run(self, program, args, ...)
+    if type(args) ~= "table" then
+        args = {args, ...}
+    end
+
+    local func
     if type(program) == "string" then
-        if PATH[program] then
-            require(PATH[program])(table.unpack(args))
-        elseif fs.exists(shellDir:gsub("%/$", "") .. "/" .. program .. ".lua") then
-            require(shellDir:gsub("%/$", "") .. "/" .. program)(table.unpack(args))
+        if self.PATH[program] then
+            func = assert(loadfile(self.PATH[program], "t", _ENV))
+        elseif fs.exists(self.shellDir:gsub("%/$", "") .. "/" .. program .. ".lua") then
+            func = assert(loadfile(self.shellDir:gsub("%/$", "") .. "/" .. program), "t", _ENV)
         else
             error("___NO_FILE___")
         end
     else
         error("Program must be a string")
     end
+
+    self:execute(func, table.unpack(args))
 end
 
-function funcs.dir()
-    return shellDir
+function funcs.dir(self)
+    return self.shellDir
 end
 
-function funcs.getPath()
-    return PATH
+function funcs.getPath(self)
+    return self.PATH
 end
 
 -- absoluteDir should not include '.lua'
-function funcs.addToPath(program, absoluteDir)
-    PATH[program] = absoluteDir
+function funcs.addToPath(self, program, absoluteDir)
+    self.PATH[program] = absoluteDir
 end
 
-function funcs.getAbsolutePath(relative)
+function funcs.getAbsolutePath(self, relative)
     if not relative:find("^%/") then
-        return shellDir:gsub("%/$", "") .. "/" .. relative
+        return self.shellDir:gsub("%/$", "") .. "/" .. relative
     else
         return relative
     end
 end
 
-function funcs.getProgram(program)
-    if PATH[program] then
-        return PATH[program]
-    elseif fs.exists(shellDir:gsub("%/$", "") .. "/" .. program .. ".lua") then
-        return shellDir:gsub("%/$", "") .. "/" .. program .. ".lua"
+function funcs.getProgram(self, program)
+    if self.PATH[program] then
+        return self.PATH[program]
+    elseif fs.exists(self.shellDir:gsub("%/$", "") .. "/" .. program .. ".lua") then
+        return self.shellDir:gsub("%/$", "") .. "/" .. program .. ".lua"
     end
 end
 
 funcs.resolveProgram = funcs.getProgram
 funcs.programs = funcs.getPath
 funcs.resolve = funcs.getAbsolutePath
-funcs.execute = funcs.run
 funcs.path = funcs.getPath
 
-return funcs
+funcs.__index = funcs
+
+local shellToReturn = {
+    new = function()
+        local new = setmetatable({}, funcs)
+
+        new.shellDir = "/home/user"
+        new.PATH = {}
+
+        for k, v in pairs(fs.list("/bin")) do
+            if not v:find("/") then
+                new.PATH[v:gsub(".lua$", "")] = "/bin/" .. v
+                print("Adding " .. v .. " to path")
+            end
+        end
+
+        return new
+    end
+}
+
+return shellToReturn

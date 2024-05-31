@@ -1,7 +1,7 @@
-return function(str, ...)
-    if not str then
-        shell.run("echo", {"Hello, World!"})
-    else
-        shell.run("echo", {str, ...})
-    end
+local tbl = { ... }
+
+if not tbl then
+    shell:run("echo", { "Hello, World!" })
+else
+    shell:run("echo", tbl)
 end
