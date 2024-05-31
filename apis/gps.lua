@@ -234,6 +234,8 @@ function funcs.host(x, y, z)
             if side == modemSide and channel == gps.CHANNEL_GPS and message == "PING" and distance then
                 modem.transmit(replyChannel, funcs.CHANNEL_GPS, {x, y, z})
 
+                numServed = numServed + 1
+
                 print("Serving request. " .. numServed .. " GPS request" .. (numServed > 1 and "s" or "") .. " served")
             end
         end
