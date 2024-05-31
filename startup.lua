@@ -16,5 +16,5 @@ end
 term.setBackgroundColor(colors.black)
 term.setCursorPos(1, 1)
 
-require("/bin/sh")()
+loadfile("/bin/sh.lua", "t", _ENV)(shell)
 os.shutdown()

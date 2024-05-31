@@ -192,7 +192,7 @@ function loadfile(filename, mode, env)
         mode, env = nil, mode
     end
 
-    if type(filename) == "string" then
+    if type(filename) ~= "string" then
         error("invalid argument 1")
     end
 
@@ -200,7 +200,7 @@ function loadfile(filename, mode, env)
         error("invalid argument 2")
     end
 
-    if type(env) ~= "string" and type(env) ~= "nil" then
+    if type(env) ~= type(_ENV) and type(env) ~= "nil" then
         error("invalid argument 2")
     end
 
@@ -234,5 +234,6 @@ os.unloadAPI = nil
 
 os.sleep = sleep
 
+newShell = require("/apis/shell")
 fs = require("/apis/fs")
-shell = require("/apis/shell")
+shell = newShell.new()
