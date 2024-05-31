@@ -24,17 +24,18 @@ function string.split(str, on)
     return result
 end
 
-function write(sText)
+function write(sText, left)
     sText = tostring(sText)
+    left = left or 1
 
     local w, h = term.getSize()
     local x, y = term.getCursorPos()
 
     local function newLine()
         if y + 1 <= h then
-            term.setCursorPos(1, y + 1)
+            term.setCursorPos(left, y + 1)
         else
-            term.setCursorPos(1, h)
+            term.setCursorPos(left, h)
             term.scroll(1)
         end
         x, y = term.getCursorPos()

@@ -58,5 +58,3 @@ term.clear()
 term.setCursorPos(1, 1)
 
 loadfile(bootOpts[option], "t", _ENV)()
-
-read()

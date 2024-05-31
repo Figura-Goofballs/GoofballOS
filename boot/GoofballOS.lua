@@ -11,14 +11,50 @@ end
 
 os.pullEvent = pEvent
 
-print("Please specify monitor name or press enter")
-local monitor = io.read()
+::monitorSelection::
+term.clear()
+term.setCursorPos(1, 1)
 
-if monitor and monitor ~= "" and peripheral.isPresent(monitor) then
-    print("Redirecting to monitor " .. monitor)
-    monitor = peripheral.wrap(monitor)
-    prevTerm = term.redirect(monitor)
+local monitors = table.pack(peripheral.find("monitor"))
+
+if monitors.n > 0 then
+    print("Which monitor would you like to use (by number)?")
+
+    print("  1. None")
+
+    for k, v in ipairs(monitors) do
+        print("  " .. k + 1 .. ". " .. peripheral.getName(v):gsub("^.", string.upper):gsub("_", " "))
+    end
+
+    write("monitor: ")
+
+    local monitor = io.read()
+
+    monitor = tonumber(monitor)
+
+    if monitor == nil then
+        goto monitorSelection
+    end
+
+    if monitors[monitor - 1] then
+        print("Redirecting output")
+        print("also mirroring to default")
+        term.mirror(true)
+        sleep(3)
+        defaultTerminal = term.redirect(monitors[monitor - 1])
+    elseif monitor == 1 then
+        print("Using default terminal")
+        sleep(1)
+    else
+        goto monitorSelection
+    end
 end
+
+term.setBackgroundColor(colors.black)
+if not debugMode then
+    term.clear()
+end
+term.setCursorPos(1, 1)
 
 xpcall(function ()
     loadfile("/bin/sh.lua", "t", _ENV)(shell)
