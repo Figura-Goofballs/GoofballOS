@@ -1,4 +1,14 @@
-require("bios")
+rom = false
+
+function _require(path)
+    if rom then
+        return require('rom/' .. path:gsub('^%/', ''))
+    else
+        return require(path)
+    end
+end
+
+_require("/bios")
 
 ::askForBootOption::
 
@@ -9,6 +19,13 @@ local opts = {}
 for k, v in pairs(fs.list("/boot")) do
     if not v:find("/") then
         opts[v:gsub(".lua$", "")] = fs.combine("/boot", v)
+        print("Adding " .. v .. " to boot list")
+    end
+end
+
+for k, v in pairs(fs.list("/rom/boot")) do
+    if not v:find("/") then
+        opts[v:gsub(".lua$", "")] = fs.combine("/rom/boot", v)
         print("Adding " .. v .. " to boot list")
     end
 end

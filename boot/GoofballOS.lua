@@ -1,10 +1,10 @@
-vectir = require("/apis/vector")
-newShell = require("/apis/shell")
-fs = require("/apis/fs")
-disk = require("/apis/disk")
+vectir = _require("/apis/vector")
+newShell = _require("/apis/shell")
+fs = _require("/apis/fs")
+disk = _require("/apis/disk")
 shell = newShell.new()
-keys = require("/enums/keys")
-gps = require("/apis/gps")
+keys = _require("/enums/keys")
+gps = _require("/apis/gps")
 
 local pEvent = os.pullEvent
 os.pullEvent = os.pullEventRaw
@@ -61,7 +61,11 @@ end
 term.setCursorPos(1, 1)
 
 xpcall(function ()
-    loadfile("/bin/sh.lua", "t", _ENV)(shell)
+    if rom then
+        loadfile("/rom/bin/sh.lua", "t", _ENV)(shell)
+    else
+        loadfile("/bin/sh.lua", "t", _ENV)(shell)
+    end
 end, function (err)
     local width, height = term.getSize()
 

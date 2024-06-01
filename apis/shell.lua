@@ -103,6 +103,13 @@ local shellToReturn = {
             end
         end
 
+        for k, v in pairs(fs.list("/rom/bin")) do
+            if not v:find("/") then
+                new.PATH[v:gsub(".lua$", "")] = "/bin/" .. v
+                print("Adding " .. v .. " to path")
+            end
+        end
+
         return new
     end
 }

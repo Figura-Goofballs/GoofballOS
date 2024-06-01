@@ -1,6 +1,6 @@
 debugMode = false
 
-term = require("/apis/term")
+term = _require("/apis/term")
 
 function expect(index, argument, goodType)
     index = tonumber(index) or -1

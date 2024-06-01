@@ -14,7 +14,7 @@ if not debugMode then
     term.clear()
     term.setCursorPos(1, 1)
 end
-gps = require("/apis/gps")
+
 term.setTextColor(colors.yellow)
 print("Welcome to " .. os.version() .. " \n")
 term.setTextColor(colors.white)
