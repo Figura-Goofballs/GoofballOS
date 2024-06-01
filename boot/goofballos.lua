@@ -1,10 +1,8 @@
 vector = _require("/apis/vector")
 newShell = _require("/apis/shell")
-fs = _require("/apis/fs")
 disk = _require("/apis/disk")
 shell = newShell.new()
 gps = _require("/apis/gps")
-term = _require("/apis/term")
 
 function os.version()
     return "GoofballOS v1.0.0"

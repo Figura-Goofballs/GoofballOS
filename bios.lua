@@ -53,15 +53,32 @@ function _require(path)
     end
 end
 
-keys = _require("/enums/keys")
-
-function expect(index, argument, goodType)
+function expect(index, argument, ...)
     index = tonumber(index) or -1
 
-    if type(argument) ~= goodType then
-        error(("Bad argument #%i (%s expected, got %s)"):format(index, type(argument), goodType))
+    local valid = {...}
+
+    local errMsg = ("Bad argument #%i (got %s, expected, "):format(index, type(argument))
+
+    for k, v in pairs(valid) do
+        if k == #valid then
+            errMsg = errMsg .. (k ~= 1 and 'or ' or '') .. v
+        else
+            errMsg = errMsg .. v .. ', '
+        end
+
+        if type(argument) == v then
+            return
+        end
     end
+
+    error()
 end
+
+keys = _require("/enums/keys")
+fs = _require("/apis/fs")
+term = _require("/apis/term")
+paintutils = _require("/apis/paintutils")
 
 function os.pullEventRaw(sFilter)
     return coroutine.yield(sFilter)
