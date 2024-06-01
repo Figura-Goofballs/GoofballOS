@@ -110,3 +110,5 @@ function funcs.fromBlit(hex)
 
     return 2 ^ value
 end
+
+return funcs

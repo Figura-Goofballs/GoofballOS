@@ -55,8 +55,6 @@ end
 function _term.clear()
     print(native_term or 'test')
     print('tset')
-    sleep(10)
-    -- pcall(redirectTarget.clear)
     if mirror then
         native_term.clear()
     end
