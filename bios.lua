@@ -38,7 +38,6 @@ function require(path)
         return required[path]
     else
         local loaded = loadfile(path)
-        term.write(loaded)
         if loaded then
             required[path] = loaded()
             return required[path]
