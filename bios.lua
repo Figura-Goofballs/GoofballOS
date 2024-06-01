@@ -363,11 +363,11 @@ local loaderName = "GoofyBOOT"
 
 local width, height = term.getSize()
 
--- paintutils.drawBox(1, 1, width, height, colors.white)
+paintutils.drawBox(1, 1, width, height, colors.white)
 term.setCursorPos((width / 2) - (#loaderName / 2), 1)
 term.setTextColor(colors.black)
 write(loaderName)
--- paintutils.drawFilledBox(2, 2, width - 1, height - 1, colors.black)
+paintutils.drawFilledBox(2, 2, width - 1, height - 1, colors.black)
 term.setTextColor(colors.white)
 
 for k, v in pairs(opts) do

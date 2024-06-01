@@ -115,3 +115,5 @@ function funcs.drawLine(x1, y1, x2, y2, color)
         end
     end
 end
+
+return funcs
