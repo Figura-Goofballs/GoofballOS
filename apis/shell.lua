@@ -95,6 +95,7 @@ local shellToReturn = {
 
         new.shellDir = "/home/user"
         new.PATH = {}
+        new.vars = {}
 
         for k, v in pairs(fs.list("/bin")) do
             if not v:find("/") then
