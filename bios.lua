@@ -1,6 +1,55 @@
+if rom ~= false then
+    rom = true
+end
+
 debugMode = false
 
-term = _require("/apis/term")
+function loadfile(filename, mode, env)
+    -- Support the previous `loadfile(filename, env)` form instead.
+    if type(mode) == "table" and env == nil then
+        mode, env = nil, mode
+    end
+
+    if type(filename) ~= "string" then
+        error("invalid argument 1")
+    end
+
+    if type(mode) ~= "string" and type(mode) ~= "nil" then
+        error("invalid argument 2")
+    end
+
+    if type(env) ~= type(_ENV) and type(env) ~= "nil" then
+        error("invalid argument 2")
+    end
+
+    local file = fs.open(filename, "r")
+    if not file then return nil, "File not found" end
+
+    local func, err = load(file.readAll(), "@/" .. fs.combine(filename), mode, env)
+    file.close()
+    return func, err
+end
+
+local required = {}
+
+function require(path)
+    if required[path] then
+        return required[path]
+    else
+        required[path] = loadfile(path)
+        return required[path]
+    end
+end
+
+function _require(path)
+    if rom then
+        return require('rom/' .. path:gsub('^%/', ''))
+    else
+        return require(path)
+    end
+end
+
+keys = _require("/enums/keys")
 
 function expect(index, argument, goodType)
     index = tonumber(index) or -1
@@ -91,8 +140,7 @@ function write(sText, left)
         end
     end
 end
-print(read)
--- History and completion func exists here for backwards compatibility, they do nothing right now
+
 function read(replChar, history, completionFunc, default, maxLength)
     local blink = term.getCursorBlink()
     term.setCursorBlink(true)
@@ -192,32 +240,6 @@ function printError(...)
     term.setTextColor(oldColor)
 end
 
-function loadfile(filename, mode, env)
-    -- Support the previous `loadfile(filename, env)` form instead.
-    if type(mode) == "table" and env == nil then
-        mode, env = nil, mode
-    end
-
-    if type(filename) ~= "string" then
-        error("invalid argument 1")
-    end
-
-    if type(mode) ~= "string" and type(mode) ~= "nil" then
-        error("invalid argument 2")
-    end
-
-    if type(env) ~= type(_ENV) and type(env) ~= "nil" then
-        error("invalid argument 2")
-    end
-
-    local file = fs.open(filename, "r")
-    if not file then return nil, "File not found" end
-
-    local func, err = load(file.readAll(), "@/" .. fs.combine(filename), mode, env)
-    file.close()
-    return func, err
-end
-
 function dofile(_sFile)
     local fnFile, e = loadfile(_sFile, nil, _G)
     if fnFile then
@@ -270,5 +292,71 @@ else
 
     goto passwordInput
 end
+
+::askForBootOption::
+
+term.clear()
+
+local opts = {}
+
+for k, v in pairs(fs.list("/boot")) do
+    if not v:find("/") then
+        opts[v:gsub(".lua$", "")] = fs.combine("/boot", v)
+        print("Adding " .. v .. " to boot list")
+    end
+end
+
+for k, v in pairs(fs.list("/rom/boot")) do
+    if not v:find("/") then
+        opts[v:gsub(".lua$", "")] = fs.combine("/rom/boot", v)
+        print("Adding " .. v .. " to boot list")
+    end
+end
+
+for _, v in pairs({peripheral.find("drive")}) do
+    if v.isDiskPresent(peripheral.getName(v)) then
+        for _, w in pairs(fs.list("/" .. fs.combine(v.getMountPath(peripheral.getName(v)), "/boot"))) do
+            if not w:find("/") then
+                opts[w:gsub(".lua$", "")] = "/" .. fs.combine(v.getMountPath(peripheral.getName(v)), "boot", w)
+                print("Adding " .. w .. " to boot list")
+            end
+        end
+    end
+end
+
+local iter = 0
+local bootOpts = {}
+
+local loaderName = "GoofyBOOT"
+
+local width, height = term.getSize()
+
+paintutils.drawBox(1, 1, width, height, colors.white)
+term.setCursorPos((width / 2) - (#loaderName / 2), 1)
+term.setTextColor(colors.black)
+write(loaderName)
+paintutils.drawFilledBox(2, 2, width - 1, height - 1, colors.black)
+term.setTextColor(colors.white)
+
+for k, v in pairs(opts) do
+    iter = iter + 1
+    bootOpts[iter] = v
+    term.setCursorPos(4, 2 + iter)
+    write(iter .. ". " .. k)
+end
+
+term.setCursorPos(4, height - 2)
+write("boot option: ")
+
+local option = tonumber(read())
+
+if not option or not bootOpts[option] then
+    goto askForBootOption
+end
+
+term.clear()
+term.setCursorPos(1, 1)
+
+loadfile(bootOpts[option], "t", _ENV)()
 
 os.pullEvent = pEvent

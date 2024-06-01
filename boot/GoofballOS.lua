@@ -1,10 +1,10 @@
-vectir = _require("/apis/vector")
+vector = _require("/apis/vector")
 newShell = _require("/apis/shell")
 fs = _require("/apis/fs")
 disk = _require("/apis/disk")
 shell = newShell.new()
-keys = _require("/enums/keys")
 gps = _require("/apis/gps")
+term = _require("/apis/term")
 
 local pEvent = os.pullEvent
 os.pullEvent = os.pullEventRaw
