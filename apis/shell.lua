@@ -61,7 +61,6 @@ function funcs.getPath(self)
     return self.PATH
 end
 
--- absoluteDir should not include '.lua'
 function funcs.addToPath(self, program, absoluteDir)
     self.PATH[program] = absoluteDir
 end
@@ -97,10 +96,23 @@ local shellToReturn = {
         new.PATH = {}
         new.vars = {}
 
-        for k, v in pairs(fs.list("/bin")) do
-            if not v:find("/") then
-                new.PATH[v:gsub(".lua$", "")] = "/bin/" .. v
-                print("Adding " .. v .. " to path")
+        if fs.exists('/bin') then
+            for k, v in pairs(fs.list("/bin")) do
+                if not v:find("/") then
+                    new.PATH[v:gsub(".lua$", "")] = "/bin/" .. v
+                    print("Adding " .. v .. " to path")
+                end
+                sleep(0)
+            end
+        end
+
+        if fs.exists('/rom/bin') then
+            for k, v in pairs(fs.list("/rom/bin")) do
+                if not v:find("/") then
+                    new.PATH[v:gsub(".lua$", "")] = "/bin/" .. v
+                    print("Adding " .. v .. " to path")
+                end
+                sleep(0)
             end
         end
 
