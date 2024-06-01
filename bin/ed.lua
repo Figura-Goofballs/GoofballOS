@@ -1,11 +1,11 @@
 -- vim:ts=2:sts=2:sw=2:et:fdm=marker:
-return function(...)
+-- return function(...)
   --{{{ setup
   assert(select('#', ...) <= 1, "Incorrect arguments", 0)
   local err = "ok"
   local pth, buf, cur = "", {}, 1
   if ... then
-    pth = fs.combine(shell.dir(), ...)
+    pth = fs.combine(shell:dir(), ...)
     local fd = fs.open(pth, "r")
     if type(fd) == "table" then
       local line, siz = fd.readLine(), 0
@@ -129,6 +129,12 @@ return function(...)
       print(buf[cur])
     end
     goto getcmd
+  elseif id == 110 then
+    -- 'n' command
+    for i, s in pairs(buf) do
+      print(i .. "\t" .. s)
+  end
+  goto getcmd
   else
     err = "Unknown command"
     print "?"
@@ -148,4 +154,4 @@ return function(...)
   cur = cur + 1
   goto getinput
   --}}}
-end
+-- end
