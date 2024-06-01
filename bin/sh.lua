@@ -1,8 +1,5 @@
-local shell = ...
+local shell = newShell.new()
 
--- whiit's debug text that will get cleared if debugMode is false
--- yeah ik I want to know where it's printed
--- I want to add a binprobe command that refreshes the path with
 if not debugMode then
     term.clear()
 end
@@ -23,10 +20,10 @@ print(
 "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.")
 print()
 
-while sleep() do
+while true do
     write(shell:dir() .. "$ ")
 
-    local input = io.read()
+    local input = read()
 
     local program, args
 
@@ -41,14 +38,17 @@ while sleep() do
     end
 
     if program and program ~= "" then
+        local env = _ENV
+        env.shell = shell
+
         if program == "sh" then
-            shell:run("sh", {newShell.new()})
+            shell:run("sh", env)
         elseif program == "exit" then
             return
         elseif program == "help" then
             shell:help()
         else
-            local success, message = pcall(shell.run, shell, program, args)
+            local success, message = pcall(shell.run, shell, program, env, args)
 
             if not success then
                 if message:find("___NO_FILE___") then

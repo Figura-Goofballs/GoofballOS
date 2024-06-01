@@ -1,7 +1,7 @@
 vector = _require("/apis/vector")
 newShell = _require("/apis/shell")
 disk = _require("/apis/disk")
-shell = newShell.new()
+-- shell = newShell.new()
 gps = _require("/apis/gps")
 
 function os.version()
@@ -12,38 +12,40 @@ end
 term.clear()
 term.setCursorPos(1, 1)
 
-local monitors = table.pack(peripheral.find("monitor"))
+if peripheral.find then
+    local monitors = table.pack(peripheral.find("monitor"))
 
-if monitors.n > 0 then
-    print("Which monitor would you like to use (by number)?")
+    if monitors.n > 0 then
+        print("Which monitor would you like to use (by number)?")
 
-    print("  1. None")
+        print("  1. None")
 
-    for k, v in ipairs(monitors) do
-        print("  " .. k + 1 .. ". " .. peripheral.getName(v):gsub("^.", string.upper):gsub("_", " "))
-    end
+        for k, v in ipairs(monitors) do
+            print("  " .. k + 1 .. ". " .. peripheral.getName(v):gsub("^.", string.upper):gsub("_", " "))
+        end
 
-    write("monitor: ")
+        write("monitor: ")
 
-    local monitor = io.read()
+        local monitor = io.read()
 
-    monitor = tonumber(monitor)
+        monitor = tonumber(monitor)
 
-    if monitor == nil then
-        goto monitorSelection
-    end
+        if monitor == nil then
+            goto monitorSelection
+        end
 
-    if monitors[monitor - 1] then
-        print("Redirecting output")
-        print("also mirroring to default")
-        term.mirror(true)
-        sleep(3)
-        defaultTerminal = term.redirect(monitors[monitor - 1])
-    elseif monitor == 1 then
-        print("Using default terminal")
-        sleep(1)
-    else
-        goto monitorSelection
+        if monitors[monitor - 1] then
+            print("Redirecting output")
+            print("also mirroring to default")
+            term.mirror(true)
+            sleep(3)
+            defaultTerminal = term.redirect(monitors[monitor - 1])
+        elseif monitor == 1 then
+            print("Using default terminal")
+            sleep(1)
+        else
+            goto monitorSelection
+        end
     end
 end
 
@@ -53,16 +55,15 @@ if not debugMode then
 end
 term.setCursorPos(1, 1)
 
-xpcall(function ()
+xpcall(function()
     if rom then
         loadfile("/rom/bin/sh.lua", "t", _ENV)(shell)
     else
         loadfile("/bin/sh.lua", "t", _ENV)(shell)
     end
-end, function (err)
-    print('test')
+end, function(err)
     local width, height = term.getSize()
-
+    term.clear()
     paintutils.drawFilledBox(1, 1, width, height, colors.blue)
 
     paintutils.drawPixel(2, 2, colors.white)
@@ -83,9 +84,9 @@ end, function (err)
     write("Press any key to restart")
 
     while true do
-        os.pullEvent("key")
-
-        os.reboot()
+        sleep()
+        print('test')
+        -- os.pullEvent("key")
     end
 end)
 
@@ -95,5 +96,3 @@ end
 
 term.setBackgroundColor(colors.black)
 term.setCursorPos(1, 1)
-
-os.shutdown()

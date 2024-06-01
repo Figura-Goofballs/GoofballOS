@@ -273,7 +273,7 @@ function dofile(_sFile)
 end
 
 function sleep(nTime)
-    if type(nTime) ~= "number" then error("Number expected") end
+    expect(1, nTime, 'number', 'nil')
     local timer = os.startTimer(nTime or 0)
     repeat
         local _, param = os.pullEvent("timer")
@@ -294,10 +294,6 @@ term.setCursorPos(1, 1)
 
 if fs.exists("/.password") then
     write("password: ")
-    
-    for _, v in pairs(fs.list('/rom')) do
-        write(v .. " ")
-    end
 
     local pass = read()
     local file = fs.open("/.password", "r")
@@ -340,21 +336,23 @@ if fs.exists('/rom/boot') then
     for k, v in pairs(fs.list("/rom/boot")) do
         if not v:find("/") then
             opts[v:gsub(".lua$", "")] = fs.combine("/rom/boot", v)
-            print("Adding " .. v .. " to boot list")
+            -- print("Adding " .. v .. " to boot list")
         end
     end
 end
 
--- for _, v in pairs({peripheral.find("drive")}) do
---     if v.isDiskPresent(peripheral.getName(v)) then
---         for _, w in pairs(fs.list("/" .. fs.combine(v.getMountPath(peripheral.getName(v)), "/boot"))) do
---             if not w:find("/") then
---                 opts[w:gsub(".lua$", "")] = "/" .. fs.combine(v.getMountPath(peripheral.getName(v)), "boot", w)
---                 print("Adding " .. w .. " to boot list")
---             end
---         end
---     end
--- end
+if peripheral.find then
+    for _, v in pairs({peripheral.find("drive")}) do
+        if v.isDiskPresent(peripheral.getName(v)) then
+            for _, w in pairs(fs.list("/" .. fs.combine(v.getMountPath(peripheral.getName(v)), "/boot"))) do
+                if not w:find("/") then
+                    opts[w:gsub(".lua$", "")] = "/" .. fs.combine(v.getMountPath(peripheral.getName(v)), "boot", w)
+                    print("Adding " .. w .. " to boot list")
+                end
+            end
+        end
+    end
+end
 
 local iter = 0
 local bootOpts = {}
@@ -389,6 +387,12 @@ end
 term.clear()
 term.setCursorPos(1, 1)
 
-loadfile(bootOpts[option], "t", _ENV)()
+print('test')
+
+print(pcall(function (...)
+    loadfile(bootOpts[option], "t", _ENV)()
+end))
+
+sleep(10)
 
 os.pullEvent = pEvent
