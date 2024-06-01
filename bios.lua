@@ -2,6 +2,14 @@ debugMode = false
 
 term = require("/apis/term")
 
+function expect(index, argument, goodType)
+    index = tonumber(index) or -1
+
+    if type(argument) ~= goodType then
+        error(("Bad argument #%i (%s expected, got %s)"):format(index, type(argument), goodType))
+    end
+end
+
 function os.pullEventRaw(sFilter)
     return coroutine.yield(sFilter)
 end

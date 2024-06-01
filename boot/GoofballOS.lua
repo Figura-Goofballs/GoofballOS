@@ -1,7 +1,10 @@
+vectir = require("/apis/vector")
 newShell = require("/apis/shell")
 fs = require("/apis/fs")
+disk = require("/apis/disk")
 shell = newShell.new()
---gps = require("/apis/gps")
+keys = require("/enums/keys")
+gps = require("/apis/gps")
 
 local pEvent = os.pullEvent
 os.pullEvent = os.pullEventRaw
