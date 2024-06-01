@@ -79,6 +79,8 @@ keys = _require("/enums/keys")
 fs = _require("/apis/fs")
 term = _require("/apis/term")
 paintutils = _require("/apis/paintutils")
+colors = _require('/enums/colors')
+colours = colors
 
 function os.pullEventRaw(sFilter)
     return coroutine.yield(sFilter)
