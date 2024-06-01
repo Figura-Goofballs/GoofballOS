@@ -6,14 +6,9 @@ shell = newShell.new()
 gps = _require("/apis/gps")
 term = _require("/apis/term")
 
-local pEvent = os.pullEvent
-os.pullEvent = os.pullEventRaw
-
 function os.version()
     return "GoofballOS v1.0.0"
 end
-
-os.pullEvent = pEvent
 
 ::monitorSelection::
 term.clear()
@@ -67,6 +62,7 @@ xpcall(function ()
         loadfile("/bin/sh.lua", "t", _ENV)(shell)
     end
 end, function (err)
+    print('test')
     local width, height = term.getSize()
 
     paintutils.drawFilledBox(1, 1, width, height, colors.blue)

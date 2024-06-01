@@ -33,11 +33,15 @@ end
 local required = {}
 
 function require(path)
+    path = path .. ".lua"
     if required[path] then
         return required[path]
     else
-        required[path] = loadfile(path)
-        return required[path]
+        local loaded = loadfile(path)
+        if loaded then
+            required[path] = loaded()
+            return required[path]
+        end
     end
 end
 
@@ -271,14 +275,19 @@ term.setCursorPos(1, 1)
 
 if fs.exists("/.password") then
     write("password: ")
+    
+    for _, v in pairs(fs.list('/rom')) do
+        write(v .. " ")
+    end
+
     local pass = read()
     local file = fs.open("/.password", "r")
 
     if (not (pass == file.readAll())) then
-        print("Incorrect password, shutting down")
         file.close()
+        print("incorrect")
         sleep(1)
-        os.shutdown()
+        goto passwordInput
     end
     file.close()
 else
@@ -299,17 +308,21 @@ term.clear()
 
 local opts = {}
 
-for k, v in pairs(fs.list("/boot")) do
-    if not v:find("/") then
-        opts[v:gsub(".lua$", "")] = fs.combine("/boot", v)
-        print("Adding " .. v .. " to boot list")
+if fs.exists('/startup.lua') then
+    for k, v in pairs(fs.list("/boot")) do
+        if not v:find("/") then
+            opts[v:gsub(".lua$", "")] = fs.combine("/boot", v)
+            print("Adding " .. v .. " to boot list")
+        end
     end
 end
 
-for k, v in pairs(fs.list("/rom/boot")) do
-    if not v:find("/") then
-        opts[v:gsub(".lua$", "")] = fs.combine("/rom/boot", v)
-        print("Adding " .. v .. " to boot list")
+if fs.exists('/rom/boot') then
+    for k, v in pairs(fs.list("/rom/boot")) do
+        if not v:find("/") then
+            opts[v:gsub(".lua$", "")] = fs.combine("/rom/boot", v)
+            print("Adding " .. v .. " to boot list")
+        end
     end
 end
 

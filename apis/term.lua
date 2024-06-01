@@ -1,3 +1,5 @@
+local iter = 0
+
 local native_term = term.native and term.native() or term
 local redirectTarget = native_term
 
@@ -9,7 +11,7 @@ local function wrap(_function)
     end
 end
 
-local _term = term
+local _term = {}
 
 function _term.redirect(target)
     if type(target) ~= "table" then error("expected table") end
@@ -51,7 +53,10 @@ function _term.write(text)
 end
 
 function _term.clear()
-    redirectTarget.clear()
+    print(native_term or 'test')
+    print('tset')
+    sleep(10)
+    -- pcall(redirectTarget.clear)
     if mirror then
         native_term.clear()
     end
