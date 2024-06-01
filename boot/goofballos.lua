@@ -1,16 +1,12 @@
-newShell = require("/apis/shell")
-fs = require("/apis/fs")
+vector = _require("/apis/vector")
+newShell = _require("/apis/shell")
+disk = _require("/apis/disk")
 shell = newShell.new()
---gps = require("/apis/gps")
-
-local pEvent = os.pullEvent
-os.pullEvent = os.pullEventRaw
+gps = _require("/apis/gps")
 
 function os.version()
     return "GoofballOS v1.0.0"
 end
-
-os.pullEvent = pEvent
 
 ::monitorSelection::
 term.clear()
@@ -58,8 +54,13 @@ end
 term.setCursorPos(1, 1)
 
 xpcall(function ()
-    loadfile("/bin/sh.lua", "t", _ENV)(shell)
+    if rom then
+        loadfile("/rom/bin/sh.lua", "t", _ENV)(shell)
+    else
+        loadfile("/bin/sh.lua", "t", _ENV)(shell)
+    end
 end, function (err)
+    print('test')
     local width, height = term.getSize()
 
     paintutils.drawFilledBox(1, 1, width, height, colors.blue)
