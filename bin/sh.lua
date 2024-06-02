@@ -108,6 +108,9 @@ if fs.exists('/home/user/.shrc') then
 
         args = inTbl
 
+        local env = _ENV
+        env.shell = shell
+
         if program == "sh" then
             print("Cannot nest shells in .shrc")
         elseif program == "exit" then
@@ -115,7 +118,7 @@ if fs.exists('/home/user/.shrc') then
         elseif program == "help" then
             shell:help()
         else
-            local success, message = pcall(shell.run, shell, program, args)
+            local success, message = pcall(shell.run, shell, program, env, args)
 
             if not success then
                 if message:find("___NO_FILE___") then
