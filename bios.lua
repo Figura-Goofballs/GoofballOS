@@ -181,6 +181,11 @@ function read(replChar, history, completionFunc, default, maxLength)
     local blink = term.getCursorBlink()
     term.setCursorBlink(true)
 
+    local historyIter
+    if history and #history >= 1 then
+        historyIter = 0
+    end
+
     maxLength = maxLength or 999999999
 
     local height, width = term.getSize()
@@ -216,6 +221,40 @@ function read(replChar, history, completionFunc, default, maxLength)
                     inText = inText:gsub(".$", "")
                     whitespaceCount = whitespaceCount + 1
                 end
+            elseif param == keys.up then
+                if historyIter == 0 then
+                    history[0] = inText
+                end
+
+                if historyIter then
+                    historyIter = historyIter + 1
+                end
+
+                while historyIter > #history do
+                    historyIter = historyIter - 1
+                end
+
+                whitespaceCount = #inText - #history[historyIter]
+                if whitespaceCount < 0 then
+                    whitespaceCount = 0
+                end
+
+                inText = history[historyIter]
+            elseif param == keys.down then
+                if historyIter then
+                    historyIter = historyIter - 1
+                end
+
+                while historyIter < 0 do
+                    historyIter = historyIter + 1
+                end
+
+                whitespaceCount = #inText - #history[historyIter]
+                if whitespaceCount < 0 then
+                    whitespaceCount = 0
+                end
+                
+                inText = history[historyIter]
             end
         elseif event == "paste" then
             inText = inText .. param

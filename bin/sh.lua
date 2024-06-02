@@ -1,5 +1,7 @@
 local shell = newShell.new()
 
+local history = {}
+
 if not debugMode then
     term.clear()
 end
@@ -23,7 +25,8 @@ print()
 while true do
     write(shell:dir() .. "$ ")
 
-    local input = read()
+    local input = read(nil, history)
+    table.insert(history, 1, input)
 
     local program, args
 
