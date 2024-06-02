@@ -14,6 +14,14 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v4
 
+    - name: Setup node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+
+    - name: Install luamin
+      run: npm install -g luamin
+
     - name: Compile datapack
       run: ./datapack-compile.sh
 

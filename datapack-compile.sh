@@ -1,12 +1,17 @@
 #!/usr/bin/env bash
 
 mkdir -p ./datapack/data/computercraft/lua/rom/
+mkdir ./datapack/data/computercraft/lua/rom/bin
+mkdir ./datapack/data/computercraft/lua/rom/apis
+mkdir ./datapack/data/computercraft/lua/rom/boot
+mkdir ./datapack/data/computercraft/lua/rom/enums
 mkdir ./out
-cp bios.lua datapack/data/computercraft/lua/bios.lua
-cp -r ./bin datapack/data/computercraft/lua/rom/bin
-cp -r ./apis datapack/data/computercraft/lua/rom/apis
-cp -r ./boot datapack/data/computercraft/lua/rom/boot
-cp -r ./enums datapack/data/computercraft/lua/rom/enums
+
+luamin -f bios.lua > ./datapack/data/computercraft/lua/bios.lua
+find ./bin/* -exec sh -c "luamin -f {} > ./datapack/data/computercraft/lua/rom/{}" \;
+find ./apis/* -exec sh -c "luamin -f {} > ./datapack/data/computercraft/lua/rom/{}" \;
+find ./boot/* -exec sh -c "luamin -f {} > ./datapack/data/computercraft/lua/rom/{}" \;
+find ./enums/* -exec sh -c "luamin -f {} > ./datapack/data/computercraft/lua/rom/{}" \;
 
 echo '{' > datapack/pack.mcmeta
 echo '  "pack": {' >> datapack/pack.mcmeta
