@@ -94,6 +94,7 @@ local shellToReturn = {
 
         new.shellDir = "/home/user"
         new.PATH = {}
+        new.vars = {}
 
         if fs.exists('/bin') then
             for k, v in pairs(fs.list("/bin")) do
