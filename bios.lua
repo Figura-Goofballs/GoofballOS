@@ -37,7 +37,7 @@ function require(path)
     if required[path] then
         return required[path]
     else
-        local loaded = loadfile(path)
+        local loaded = loadfile(path, 't', _ENV)
         if loaded then
             required[path] = loaded()
             return required[path]
@@ -75,12 +75,21 @@ function expect(index, argument, ...)
     error()
 end
 
+function sleep(nTime)
+    expect(1, nTime, 'number', 'nil')
+    local timer = os.startTimer(nTime or 0)
+    repeat
+        local _, param = os.pullEvent("timer")
+    until param == timer
+end
+
 keys = _require("/enums/keys")
 colors = _require('/enums/colors')
 fs = _require("/apis/fs")
 term = _require("/apis/term")
 paintutils = _require("/apis/paintutils")
 colours = colors
+peripheral = _require('/apis/peripheral')
 
 function os.pullEventRaw(sFilter)
     return coroutine.yield(sFilter)
@@ -270,14 +279,6 @@ function dofile(_sFile)
     else
         error(e, 2)
     end
-end
-
-function sleep(nTime)
-    expect(1, nTime, 'number', 'nil')
-    local timer = os.startTimer(nTime or 0)
-    repeat
-        local _, param = os.pullEvent("timer")
-    until param == timer
 end
 
 os.loadAPI = nil

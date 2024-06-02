@@ -97,6 +97,8 @@ function funcs.drawLine(x1, y1, x2, y2, color)
 end
 
 function funcs.drawBox(x1, y1, x2, y2, color)
+    print(expect)
+sleep(1)
     expect(1, x1, "number")
     expect(2, y1, "number")
     expect(3, x2, "number")

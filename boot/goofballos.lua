@@ -26,7 +26,7 @@ if peripheral.find then
 
         write("monitor: ")
 
-        local monitor = io.read()
+        local monitor = read()
 
         monitor = tonumber(monitor)
 
