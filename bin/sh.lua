@@ -1,8 +1,7 @@
-local shell = ...
+local shell = newShell.new()
 
--- whiit's debug text that will get cleared if debugMode is false
--- yeah ik I want to know where it's printed
--- I want to add a binprobe command that refreshes the path with
+local history = {}
+
 if not debugMode then
     term.clear()
 end
@@ -141,7 +140,8 @@ while true do
         term.blit(v.text, v.blit, v.background)
     end
 
-    local input = io.read()
+    local input = read(nil, history)
+    table.insert(history, 1, input)
 
     local program, args
 
@@ -156,14 +156,17 @@ while true do
     end
 
     if program and program ~= "" then
+        local env = _ENV
+        env.shell = shell
+
         if program == "sh" then
-            shell:run("sh", { newShell.new() })
+            shell:run("sh", env)
         elseif program == "exit" then
             return
         elseif program == "help" then
             shell:help()
         else
-            local success, message = pcall(shell.run, shell, program, args)
+            local success, message = pcall(shell.run, shell, program, env, args)
 
             if not success then
                 if message:find("___NO_FILE___") then

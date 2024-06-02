@@ -37,7 +37,7 @@ function require(path)
     if required[path] then
         return required[path]
     else
-        local loaded = loadfile(path)
+        local loaded = loadfile(path, 't', _ENV)
         if loaded then
             required[path] = loaded()
             return required[path]
@@ -58,7 +58,7 @@ function expect(index, argument, ...)
 
     local valid = {...}
 
-    local errMsg = ("Bad argument #%i (got %s, expected, "):format(index, type(argument))
+    local errMsg = ("bad arg #%i (got %s, expected "):format(index, type(argument))
 
     for k, v in pairs(valid) do
         if k == #valid then
@@ -72,7 +72,19 @@ function expect(index, argument, ...)
         end
     end
 
-    error()
+    printError(debug.traceback())
+    error(errMsg .. ')')
+    while true do
+        sleep()
+    end
+end
+
+function sleep(nTime)
+    expect(1, nTime, 'number', 'nil')
+    local timer = os.startTimer(nTime or 0)
+    repeat
+        local _, param = os.pullEvent("timer")
+    until param == timer
 end
 
 keys = _require("/enums/keys")
@@ -81,6 +93,7 @@ fs = _require("/apis/fs")
 term = _require("/apis/term")
 paintutils = _require("/apis/paintutils")
 colours = colors
+peripheral = _require('/apis/peripheral')
 
 function os.pullEventRaw(sFilter)
     return coroutine.yield(sFilter)
@@ -168,6 +181,11 @@ function read(replChar, history, completionFunc, default, maxLength)
     local blink = term.getCursorBlink()
     term.setCursorBlink(true)
 
+    local historyIter
+    if history and #history >= 1 then
+        historyIter = 0
+    end
+
     maxLength = maxLength or 999999999
 
     local height, width = term.getSize()
@@ -203,6 +221,40 @@ function read(replChar, history, completionFunc, default, maxLength)
                     inText = inText:gsub(".$", "")
                     whitespaceCount = whitespaceCount + 1
                 end
+            elseif param == keys.up then
+                if historyIter == 0 then
+                    history[0] = inText
+                end
+
+                if historyIter then
+                    historyIter = historyIter + 1
+                end
+
+                while historyIter > #history do
+                    historyIter = historyIter - 1
+                end
+
+                whitespaceCount = #inText - #history[historyIter]
+                if whitespaceCount < 0 then
+                    whitespaceCount = 0
+                end
+
+                inText = history[historyIter]
+            elseif param == keys.down then
+                if historyIter then
+                    historyIter = historyIter - 1
+                end
+
+                while historyIter < 0 do
+                    historyIter = historyIter + 1
+                end
+
+                whitespaceCount = #inText - #history[historyIter]
+                if whitespaceCount < 0 then
+                    whitespaceCount = 0
+                end
+                
+                inText = history[historyIter]
             end
         elseif event == "paste" then
             inText = inText .. param
@@ -272,14 +324,6 @@ function dofile(_sFile)
     end
 end
 
-function sleep(nTime)
-    if type(nTime) ~= "number" then error("Number expected") end
-    local timer = os.startTimer(nTime or 0)
-    repeat
-        local _, param = os.pullEvent("timer")
-    until param == timer
-end
-
 os.loadAPI = nil
 os.unloadAPI = nil
 
@@ -294,10 +338,6 @@ term.setCursorPos(1, 1)
 
 if fs.exists("/.password") then
     write("password: ")
-    
-    for _, v in pairs(fs.list('/rom')) do
-        write(v .. " ")
-    end
 
     local pass = read()
     local file = fs.open("/.password", "r")
@@ -340,21 +380,23 @@ if fs.exists('/rom/boot') then
     for k, v in pairs(fs.list("/rom/boot")) do
         if not v:find("/") then
             opts[v:gsub(".lua$", "")] = fs.combine("/rom/boot", v)
-            print("Adding " .. v .. " to boot list")
+            -- print("Adding " .. v .. " to boot list")
         end
     end
 end
 
--- for _, v in pairs({peripheral.find("drive")}) do
---     if v.isDiskPresent(peripheral.getName(v)) then
---         for _, w in pairs(fs.list("/" .. fs.combine(v.getMountPath(peripheral.getName(v)), "/boot"))) do
---             if not w:find("/") then
---                 opts[w:gsub(".lua$", "")] = "/" .. fs.combine(v.getMountPath(peripheral.getName(v)), "boot", w)
---                 print("Adding " .. w .. " to boot list")
---             end
---         end
---     end
--- end
+if peripheral.find then
+    for _, v in pairs({peripheral.find("drive")}) do
+        if v.isDiskPresent(peripheral.getName(v)) then
+            for _, w in pairs(fs.list("/" .. fs.combine(v.getMountPath(peripheral.getName(v)), "/boot"))) do
+                if not w:find("/") then
+                    opts[w:gsub(".lua$", "")] = "/" .. fs.combine(v.getMountPath(peripheral.getName(v)), "boot", w)
+                    print("Adding " .. w .. " to boot list")
+                end
+            end
+        end
+    end
+end
 
 local iter = 0
 local bootOpts = {}
@@ -363,11 +405,11 @@ local loaderName = "GoofyBOOT"
 
 local width, height = term.getSize()
 
--- paintutils.drawBox(1, 1, width, height, colors.white)
+paintutils.drawBox(1, 1, width, height, colors.white)
 term.setCursorPos((width / 2) - (#loaderName / 2), 1)
 term.setTextColor(colors.black)
 write(loaderName)
--- paintutils.drawFilledBox(2, 2, width - 1, height - 1, colors.black)
+paintutils.drawFilledBox(2, 2, width - 1, height - 1, colors.black)
 term.setTextColor(colors.white)
 
 for k, v in pairs(opts) do
@@ -389,6 +431,34 @@ end
 term.clear()
 term.setCursorPos(1, 1)
 
-loadfile(bootOpts[option], "t", _ENV)()
-
 os.pullEvent = pEvent
+
+xpcall(function()
+    loadfile(bootOpts[option], "t", _ENV)()
+end, function(err)
+    local width, height = term.getSize()
+    term.clear()
+    paintutils.drawFilledBox(1, 1, width, height, colors.blue)
+
+    paintutils.drawPixel(2, 2, colors.white)
+    paintutils.drawPixel(2, 5, colors.white)
+    paintutils.drawLine(4, 3, 4, 4, colors.white)
+    paintutils.drawPixel(5, 2, colors.white)
+    paintutils.drawPixel(5, 5, colors.white)
+
+    term.setBackgroundColor(colors.blue)
+    -- paintUtils.drawLine(7, 3, 27+7, 3, colors.black)
+    term.setCursorPos(8, 3)
+    write("An error has occured, error details are printed below", 8)
+
+    term.setCursorPos(1, 8)
+    write(err)
+
+    term.setCursorPos(2, height - 1)
+    write("Press any key to restart")
+
+    while true do
+        os.pullEvent("key")
+        os.reboot()
+    end
+end)

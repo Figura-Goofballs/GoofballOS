@@ -13,11 +13,10 @@
       if res then
         local inp = io.input()
         io.input(res)
-        local line = io.read "*l"
+        local line = read("*l")
         repeat
           print(line)
-          line = io.read
-              "*l"
+          line = read("*l")
         until not line
       else
         error("No help for " .. n, 0)
