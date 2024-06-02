@@ -8,10 +8,7 @@ mkdir ./datapack/data/computercraft/lua/rom/enums
 mkdir ./out
 
 luamin -f bios.lua > ./datapack/data/computercraft/lua/bios.lua
-find ./bin/* -exec sh -c "luamin -f {} > ./datapack/data/computercraft/lua/rom/{}" \;
-find ./apis/* -exec sh -c "luamin -f {} > ./datapack/data/computercraft/lua/rom/{}" \;
-find ./boot/* -exec sh -c "luamin -f {} > ./datapack/data/computercraft/lua/rom/{}" \;
-find ./enums/* -exec sh -c "luamin -f {} > ./datapack/data/computercraft/lua/rom/{}" \;
+find bin apis boot enums -type f -exec sh -c "luamin -f {} > ./datapack/data/computercraft/lua/rom/{}" \;
 
 echo '{' > datapack/pack.mcmeta
 echo '  "pack": {' >> datapack/pack.mcmeta
