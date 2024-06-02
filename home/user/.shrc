@@ -1,1 +1,1 @@
-set prompt '&b%u&r@&a%h &r: &d%p%n&r$ '
+set prompt '&b%u&r@&d%h &r: &a%p%n&r$ '
