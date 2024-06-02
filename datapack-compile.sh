@@ -15,4 +15,6 @@ echo '    "description": "GoofballOS datapack for CC: Tweaked"' >> datapack/pack
 echo '  }' >> datapack/pack.mcmeta
 echo '}' >> datapack/pack.mcmeta
 
-zip -r ./out/goofballos-datapack.zip datapack/*
+cd datapack
+
+zip -r ../out/goofballos-datapack.zip ./*
