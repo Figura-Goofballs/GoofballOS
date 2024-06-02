@@ -47,8 +47,8 @@ function funcs.loadImage(path)
 end
 
 function funcs.drawPixel(x, y, color)
-    expect(1, x, "string")
-    expect(2, y, "string")
+    expect(1, x, "number")
+    expect(2, y, "number")
     expect(2, y, "number", "nil")
 
     if color then

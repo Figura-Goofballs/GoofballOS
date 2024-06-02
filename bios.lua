@@ -58,7 +58,7 @@ function expect(index, argument, ...)
 
     local valid = {...}
 
-    local errMsg = ("Bad argument #%i (got %s, expected, "):format(index, type(argument))
+    local errMsg = ("bad arg #%i (got %s, expected "):format(index, type(argument))
 
     for k, v in pairs(valid) do
         if k == #valid then
@@ -72,7 +72,11 @@ function expect(index, argument, ...)
         end
     end
 
-    error()
+    printError(debug.traceback())
+    error(errMsg .. ')')
+    while true do
+        sleep()
+    end
 end
 
 function sleep(nTime)
@@ -388,12 +392,34 @@ end
 term.clear()
 term.setCursorPos(1, 1)
 
-print('test')
-
-print(pcall(function (...)
-    loadfile(bootOpts[option], "t", _ENV)()
-end))
-
-sleep(10)
-
 os.pullEvent = pEvent
+
+xpcall(function()
+    loadfile(bootOpts[option], "t", _ENV)()
+end, function(err)
+    local width, height = term.getSize()
+    term.clear()
+    paintutils.drawFilledBox(1, 1, width, height, colors.blue)
+
+    paintutils.drawPixel(2, 2, colors.white)
+    paintutils.drawPixel(2, 5, colors.white)
+    paintutils.drawLine(4, 3, 4, 4, colors.white)
+    paintutils.drawPixel(5, 2, colors.white)
+    paintutils.drawPixel(5, 5, colors.white)
+
+    term.setBackgroundColor(colors.blue)
+    -- paintUtils.drawLine(7, 3, 27+7, 3, colors.black)
+    term.setCursorPos(8, 3)
+    write("An error has occured, error details are printed below", 8)
+
+    term.setCursorPos(1, 8)
+    write(err)
+
+    term.setCursorPos(2, height - 1)
+    write("Press any key to restart")
+
+    while true do
+        os.pullEvent("key")
+        os.reboot()
+    end
+end)

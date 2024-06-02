@@ -55,40 +55,11 @@ if not debugMode then
 end
 term.setCursorPos(1, 1)
 
-xpcall(function()
-    if rom then
-        loadfile("/rom/bin/sh.lua", "t", _ENV)(shell)
-    else
-        loadfile("/bin/sh.lua", "t", _ENV)(shell)
-    end
-end, function(err)
-    local width, height = term.getSize()
-    term.clear()
-    paintutils.drawFilledBox(1, 1, width, height, colors.blue)
-
-    paintutils.drawPixel(2, 2, colors.white)
-    paintutils.drawPixel(2, 5, colors.white)
-    paintutils.drawLine(4, 3, 4, 4, colors.white)
-    paintutils.drawPixel(5, 2, colors.white)
-    paintutils.drawPixel(5, 5, colors.white)
-
-    term.setBackgroundColor(colors.blue)
-    -- paintUtils.drawLine(7, 3, 27+7, 3, colors.black)
-    term.setCursorPos(8, 3)
-    write("An error has occured, error details are printed below", 8)
-
-    term.setCursorPos(1, 8)
-    write(err)
-
-    term.setCursorPos(2, height - 1)
-    write("Press any key to restart")
-
-    while true do
-        sleep()
-        print('test')
-        -- os.pullEvent("key")
-    end
-end)
+if rom then
+    loadfile("/rom/bin/sh.lua", "t", _ENV)(shell)
+else
+    loadfile("/bin/sh.lua", "t", _ENV)(shell)
+end
 
 if not debugMode then
     term.clear()
