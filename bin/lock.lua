@@ -40,7 +40,7 @@ term.clear()
 local code = ...
 code = tonumber(code)
 
-print('Please place door to the right of this computer')
+print('Please place door or redstone to the right of this computer')
 sleep(2)
 
 redstone.setOutput('right', true)
@@ -50,11 +50,20 @@ if not code or #tostring(code) ~= 5 then
     return;
 end
 
-if not peripheral.hasType('top', 'monitor') then
-    print('Please place an advanced monitor on top')
+local monitor
+
+for _, v in pairs({peripheral.find('monitor')}) do
+    local width, height = v.getSize()
+
+    if width == 7 and height == 5 then
+        monitor = v
+    end
+end
+
+if not monitor then
+    print('Please connect a 1x1 advanced monitor')
     return;
 end
-local monitor = peripheral.wrap('top')
 
 local eachNum = {}
 ---@diagnostic disable-next-line: discard-returns
@@ -100,7 +109,7 @@ while true do
         ::event::
         local event, monitorSide, x, y = os.pullEvent() -- I tried filtering
 
-        if event == 'monitor_touch' and monitorSide == 'top' then
+        if event == 'monitor_touch' and monitorSide == peripheral.getName(monitor) then
             x, y = math.floor(x), math.floor(y)
 
             for k, v in pairs(numButtons) do
