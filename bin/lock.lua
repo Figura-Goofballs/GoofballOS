@@ -18,6 +18,23 @@ for _, v in ipairs(lock) do
 end
 local lockImage = paintutils.parseImage(lockString)
 
+local unlock = {
+    '  888  ',
+    ' 8   8 ',
+    ' 8   8 ',
+    ' 8     ',
+    '8888888',
+    '88fff88',
+    '888f888',
+    '888f888',
+    ' 88888 ',
+}
+local unlockString = ''
+for _, v in ipairs(unlock) do
+    unlockString = unlockString .. v .. '\n'
+end
+local unlockImage = paintutils.parseImage(unlockString)
+
 term.clear()
 
 local code = ...
@@ -70,6 +87,7 @@ end
 local termWidth, termHeight = term.getSize()
 
 while true do
+    term.setBackgroundColor(colors.black)
     term.clear()
     paintutils.drawImage(lockImage, (termWidth / 2) - (lockWidth / 2), (termHeight / 2) - (lockHeight / 2) + 1)
 
@@ -103,6 +121,10 @@ while true do
     end
 
     if inCode[1] == eachNum[1] and inCode[2] == eachNum[2] and inCode[3] == eachNum[3] and inCode[4] == eachNum[4] and inCode[5] == eachNum[5] then
+        term.setBackgroundColor(colors.black)
+        term.clear()
+        paintutils.drawImage(unlockImage, (termWidth / 2) - (lockWidth / 2), (termHeight / 2) - (lockHeight / 2))
+
         redstone.setOutput('right', false)
         sleep(3)
         redstone.setOutput('right', true)
