@@ -3,6 +3,8 @@ newShell = _require("/apis/shell")
 disk = _require("/apis/disk")
 -- shell = newShell.new()
 gps = _require("/apis/gps")
+parallel = _require('/apis/parallel')
+textutils = _require('/apis/textutils')
 
 function os.version()
     return "GoofballOS v1.0.0"
