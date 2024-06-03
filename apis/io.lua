@@ -28,6 +28,7 @@ function io.open(f, m)
 end
 --}}}
 --{{{ implicit files
+--{{{ implicit input
 function io.input(...)
     if is_none(...) then
         return i
@@ -37,6 +38,12 @@ function io.input(...)
         i = io.open(..., "r")
     end
 end
+function io.read(...)
+    assert(i, "Implicit input is not set")
+    return i:read(...)
+end
+--}}}
+--{{{ implicit output
 function io.output(...)
     if is_none(...) then
         return o
@@ -46,6 +53,11 @@ function io.output(...)
         o = io.open(..., "w")
     end
 end
+function io.write(...)
+    assert(i, "Implicit output is not set")
+    return i:write(...)
+end
+--}}}
 --}}}
 --{{{ copy shit
 for _, k in ipairs { "stdin", "stdout", "stderr" } do
