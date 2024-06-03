@@ -1,10 +1,30 @@
 os.pullEvent = os.pullEventRaw
+
+local lock = {
+    '  888  ',
+    ' 8   8 ',
+    ' 8   8 ',
+    '8888888',
+    '88fff88',
+    '888f888',
+    '888f888',
+    ' 88888 ',
+}
+local lockWidth = #lock[1]
+local lockHeight = #lock
+local lockString = ''
+for _, v in ipairs(lock) do
+    lockString = lockString .. v .. '\n'
+end
+local lockImage = paintutils.parseImage(lockString)
+
 term.clear()
 
 local code = ...
 code = tonumber(code)
 
 print('Please place door to the right of this computer')
+sleep(2)
 
 redstone.setOutput('right', true)
 
@@ -47,7 +67,12 @@ for k, v in pairs(numButtons) do
     monitor.write(k)
 end
 
+local termWidth, termHeight = term.getSize()
+
 while true do
+    term.clear()
+    paintutils.drawImage(lockImage, (termWidth / 2) - (lockWidth / 2), (termHeight / 2) - (lockHeight / 2) + 1)
+
     monitor.setCursorPos(1, height / 2)
     monitor.write('[     ]')
 
