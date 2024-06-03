@@ -65,11 +65,16 @@ while true do
                     monitor.setCursorPos(1 + i, height / 2)
                     monitor.write('*')
                     inCode[i] = k
+                    goto continue
                 end
             end
+
+            goto event
         else
             goto event
         end
+
+        ::continue::
     end
 
     if inCode[1] == eachNum[1] and inCode[2] == eachNum[2] and inCode[3] == eachNum[3] and inCode[4] == eachNum[4] and inCode[5] == eachNum[5] then
