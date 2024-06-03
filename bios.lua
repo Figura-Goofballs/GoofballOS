@@ -221,7 +221,7 @@ function read(replChar, history, completionFunc, default, maxLength)
                     inText = inText:gsub(".$", "")
                     whitespaceCount = whitespaceCount + 1
                 end
-            elseif param == keys.up then
+            elseif historyIter and param == keys.up then
                 if historyIter == 0 then
                     history[0] = inText
                 end
@@ -240,7 +240,7 @@ function read(replChar, history, completionFunc, default, maxLength)
                 end
 
                 inText = history[historyIter]
-            elseif param == keys.down then
+            elseif historyIter and param == keys.down then
                 if historyIter then
                     historyIter = historyIter - 1
                 end
