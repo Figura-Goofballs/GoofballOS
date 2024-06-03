@@ -113,7 +113,7 @@ if fs.exists('/home/user/.shrc') then
         env.turtle = turtle
 
         if program == "sh" then
-            print("Cannot nest shells in .shrc")
+            shell:run("sh", env)
         elseif program == "exit" then
             return
         elseif program == "help" then
