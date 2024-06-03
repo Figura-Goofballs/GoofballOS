@@ -308,6 +308,12 @@ function print(...)
     write("\n")
 end
 
+function printf(str, ...)
+    expect(1, str, 'string')
+
+    print(str:format(...))
+end
+
 function printError(...)
     local oldColor = term.getTextColor()
     term.setTextColor(colors.red)
@@ -388,10 +394,12 @@ end
 if peripheral.find then
     for _, v in pairs({peripheral.find("drive")}) do
         if v.isDiskPresent(peripheral.getName(v)) then
-            for _, w in pairs(fs.list("/" .. fs.combine(v.getMountPath(peripheral.getName(v)), "/boot"))) do
-                if not w:find("/") then
-                    opts[w:gsub(".lua$", "")] = "/" .. fs.combine(v.getMountPath(peripheral.getName(v)), "boot", w)
-                    print("Adding " .. w .. " to boot list")
+            if fs.exists("/" .. fs.combine(v.getMountPath(peripheral.getName(v)), "/boot")) then
+                for _, w in pairs(fs.list("/" .. fs.combine(v.getMountPath(peripheral.getName(v)), "/boot"))) do
+                    if not w:find("/") then
+                        opts[w:gsub(".lua$", "")] = "/" .. fs.combine(v.getMountPath(peripheral.getName(v)), "boot", w)
+                        print("Adding " .. w .. " to boot list")
+                    end
                 end
             end
         end
