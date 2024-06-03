@@ -393,7 +393,7 @@ end
 
 if peripheral.find then
     for _, v in pairs({peripheral.find("drive")}) do
-        if v.isDiskPresent(peripheral.getName(v)) then
+        if v.isDiskPresent(peripheral.getName(v)) and v.hasData() then
             if fs.exists("/" .. fs.combine(v.getMountPath(peripheral.getName(v)), "/boot")) then
                 for _, w in pairs(fs.list("/" .. fs.combine(v.getMountPath(peripheral.getName(v)), "/boot"))) do
                     if not w:find("/") then
