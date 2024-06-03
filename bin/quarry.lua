@@ -35,8 +35,20 @@ local goodMatches = {
 }
 
 local iter = 0
-local override = 0
 while true do
+    for i = 1, 16 do
+        local item = turtle.getItemDetail(i)
+
+        if item and turtle.getFuelLevel() <= 500 then
+            local name = item.name
+
+            if name:find('coal') then
+                turtle.select(i)
+                turtle.refuel()
+            end
+        end
+    end
+
     turtle.digDown()
     turtle.down()
     turtle.digDown()
@@ -59,7 +71,31 @@ while true do
 
                 sleep(0.2)
 
-                if not turtle.inspect() and not turtle.inspectUp() and not turtle.inspectDown() then
+                local _, down = turtle.inspectDown()
+                local _, forward = turtle.inspect()
+                local _, up = turtle.inspectUp()
+
+                local override, overrideDown, overrideUp
+
+                if down and down.name then
+                    if down.name:find('water') or down.name:find('lava') then
+                        overrideDown = true
+                    end
+                end
+
+                if up and up.name then
+                    if up.name:find('water') or up.name:find('lava') then
+                        overrideUp = true
+                    end
+                end
+
+                if forward and forward.name then
+                    if forward.name:find('water') or forward.name:find('lava') then
+                        override = true
+                    end
+                end
+
+                if (not turtle.inspect() or override) and (not turtle.inspectUp() or overrideUp) and (not turtle.inspectDown() or overrideDown) then
                     break
                 end
             end
@@ -67,6 +103,8 @@ while true do
         end
 
         while true do
+            local overrideDown, overrideUp
+
             if turtle.inspectUp() then
                 turtle.digUp()
             end
@@ -74,9 +112,24 @@ while true do
                 turtle.digDown()
             end
 
+            local _, up = turtle.inspectUp()
+            local _, down = turtle.inspectDown()
+
+            if down and down.name then
+                if down.name:find('water') or down.name:find('lava') then
+                    overrideDown = true
+                end
+            end
+
+            if up and up.name then
+                if up.name:find('water') or up.name:find('lava') then
+                    overrideUp = true
+                end
+            end
+
             sleep(0.2)
 
-            if not turtle.inspectUp() and not turtle.inspectDown() then
+            if (not turtle.inspectUp() or overrideUp) and (not turtle.inspectDown() or overrideDown) then
                 break
             end
         end
@@ -91,15 +144,25 @@ while true do
                     turtle.dig()
                 end
     
+                local override
+                
                 sleep(0.2)
+
+                local _, forward = turtle.inspect()
+
+                if forward and forward.name then
+                    if forward.name:find('water') or forward.name:find('lava') then
+                        override = true
+                    end
+                end
     
-                if not turtle.inspect() then
+                if not turtle.inspect() or override then
                     break
                 end
             end
             turtle.forward()
         end
-        if math.fmod(y + iter, 2)+override ~= 0 then
+        if math.fmod(y + iter, 2) ~= 0 then
             turtle.turnRight()
         else
             turtle.turnLeft()
