@@ -25,11 +25,11 @@ local function parseLine(tImageArg, sLine)
     table.insert(tImageArg, tLine)
 end
 
-function funcs.parseImage(image)
-    expect(1, image, "string")
+function funcs.parseImage(img)
+    expect(1, img, "string")
 
     local image = {}
-    for line in (image .. "\n"):gmatch("(.-)\n") do
+    for line in (img .. "\n"):gmatch("(.-)\n") do
         parseLine(image, line)
     end
     return image
@@ -143,6 +143,7 @@ function funcs.drawImage(image, xPos, yPos)
     expect(1, image, "table")
     expect(2, xPos, "number")
     expect(3, yPos, "number")
+
     for y = 1, #image do
         local tLine = image[y]
         for x = 1, #tLine do

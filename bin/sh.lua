@@ -110,6 +110,7 @@ if fs.exists('/home/user/.shrc') then
 
         local env = _ENV
         env.shell = shell
+        env.turtle = turtle
 
         if program == "sh" then
             shell:run("sh", env)
