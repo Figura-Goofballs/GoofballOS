@@ -1,0 +1,2 @@
+---@alias http.Url string|{url: string}
+---@alias peripheral table

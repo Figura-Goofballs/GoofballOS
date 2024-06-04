@@ -1,3 +1,4 @@
+---@class gps
 local funcs = {}
 
 funcs.CHANNEL_GPS = 65534
@@ -71,6 +72,12 @@ local function narrow(p1, p2, fix)
     end
 end
 
+---Attempts to locate using GPS
+---@param timeout any
+---@param debug any
+---@return number|nil
+---@return number|nil
+---@return number|nil
 function funcs.locate(timeout, debug)
     if commands then
         return commands.getBlockPosition()
@@ -108,7 +115,7 @@ function funcs.locate(timeout, debug)
 
     local anchors = {}
     local pos1, pos2 = nil, nil
-    local timeout = os.startTimer(_nTimeout or 2)
+    local timeout = os.startTimer(timeout or 2)
 
     while true do
         local e, p1, p2, p3, p4, p5 = os.pullEvent()
@@ -186,16 +193,23 @@ function funcs.locate(timeout, debug)
     end
 end
 
+---Hosts a GPS server
+---@param x number
+---@param y number
+---@param z number
+---@return nil
 function funcs.host(x, y, z)
     if pocket or turtle then
         error("GPS Hosts must be stationary")
     end
 
     local x2, y2, z2
+---@diagnostic disable-next-line: cast-local-type
     x, y, z = tonumber(x), tonumber(y), tonumber(z)
 
     if not x or not y or not z then
         print("No coordinates inputted, trying to locate")
+---@diagnostic disable-next-line: cast-local-type
         x, y, z, x2, y2, z2 = funcs.locate(2, true)
     end
 
