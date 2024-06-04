@@ -348,10 +348,19 @@ print "POST…" do
     -- assert(io.output() == nil)
     -- assert(not pcall(io.write, "BAD"))
     io.output(f)
+    assert(io.output() == f)
     io.write "2"
     f:close()
     -- assert(io.output() == nil)
     io.output(o)
+    f = assert(io.open ".postwork")
+    o = io.input()
+    io.input(f)
+    assert(io.input() == f)
+    assert(io.read "*l" == "12")
+    assert(not io.read(0))
+    f:close()
+    io.input(o)
 end
 
 ::passwordInput::
