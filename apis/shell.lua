@@ -1,5 +1,12 @@
+---@class shell
+---@field shellDir string
+---@field PATH string[]
+---@field vars table
 local funcs = {}
 
+---Sets the shell's directory
+---@param self shell
+---@param dir string
 function funcs.setDir(self, dir)
     if dir:find("^%/") then
         if fs.isDir(dir) then
@@ -18,6 +25,8 @@ function funcs.setDir(self, dir)
     self.shellDir = "/" .. fs.combine(self.shellDir) -- normalize
 end
 
+---Prints all available commands
+---@param self shell
 function funcs.help(self)
     local tbl = {}
 
@@ -28,10 +37,20 @@ function funcs.help(self)
     print(table.unpack(tbl))
 end
 
+---Executes a function
+---@param self shell
+---@param func function
+---@param ... any
 function funcs.execute(self, func, ...)
     func(...)
 end
 
+---Runs a program
+---@param self shell
+---@param program string
+---@param env table
+---@param args table|any
+---@param ... any
 function funcs.run(self, program, env, args, ...)
     if type(args) ~= "table" then
         args = {args, ...}
@@ -53,31 +72,49 @@ function funcs.run(self, program, env, args, ...)
     self:execute(func, table.unpack(args))
 end
 
+---Returns working directory
+---@param self shell
+---@return string
 function funcs.dir(self)
     return self.shellDir
 end
 
+---Returns path (list of programs)
+---@param self shell
+---@return string[]
 function funcs.getPath(self)
     return self.PATH
 end
 
+---Adds a program to path (list of programs)
+---@param self shell
+---@param program string
+---@param absoluteDir string
 function funcs.addToPath(self, program, absoluteDir)
     self.PATH[program] = absoluteDir
 end
 
+---Returns the absoluter path based on a relative path
+---@param self shell
+---@param relative string
+---@return string
 function funcs.getAbsolutePath(self, relative)
     if not relative:find("^%/") then
-        return self.shellDir:gsub("%/$", "") .. "/" .. relative
+        return fs.combine(self.shellDir, relative)
     else
         return relative
     end
 end
 
+---Gets a program
+---@param self shell
+---@param program string
+---@return string|nil
 function funcs.getProgram(self, program)
     if self.PATH[program] then
         return self.PATH[program]
     elseif fs.exists(self.shellDir:gsub("%/$", "") .. "/" .. program .. ".lua") then
-        return self.shellDir:gsub("%/$", "") .. "/" .. program .. ".lua"
+        return fs.combine(self.shellDir, program .. ".lua")
     end
 end
 

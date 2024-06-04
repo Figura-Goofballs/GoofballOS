@@ -1,5 +1,7 @@
+---@diagnostic disable: undefined-field
 local native_fs = fs -- CC: Tweaked does the same thing
 
+---@class fs
 local fs = _ENV
 for k, v in pairs(native_fs) do
     if not (k == "complete") and not (k == "find") and not (k == "isDriveRoot") then
@@ -7,6 +9,9 @@ for k, v in pairs(native_fs) do
     end
 end
 
+---Returns whether the path is the root of any drive
+---@param path string
+---@return boolean
 function fs.isDriveRoot(path)
     return fs.getDir(path) == ".." or fs.getDrive(path) ~= fs.getDrive(fs.getDir(path))
 end
@@ -39,6 +44,9 @@ local function find(path, segments, iter, out)
 
 end
 
+---Finds all matches of the file glob
+---@param pattern string
+---@return table
 function fs.find(pattern)
     pattern = fs.combine(pattern)
 

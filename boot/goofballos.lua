@@ -1,7 +1,7 @@
 vector = _require("/apis/vector")
 newShell = _require("/apis/shell")
 disk = _require("/apis/disk")
--- shell = newShell.new()
+http = _require("/apis/http")
 gps = _require("/apis/gps")
 parallel = _require('/apis/parallel')
 

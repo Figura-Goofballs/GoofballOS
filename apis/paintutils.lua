@@ -1,3 +1,4 @@
+---@class paintutils
 local funcs = {}
 
 local function internalDrawPixel(x, y)
@@ -25,6 +26,9 @@ local function parseLine(tImageArg, sLine)
     table.insert(tImageArg, tLine)
 end
 
+---Parses an image
+---@param image string
+---@return table
 function funcs.parseImage(image)
     expect(1, image, "string")
 
@@ -35,6 +39,9 @@ function funcs.parseImage(image)
     return image
 end
 
+---Loads an nfp image
+---@param path string
+---@return table|nil
 function funcs.loadImage(path)
     expect(1, path, "string")
 
@@ -46,6 +53,10 @@ function funcs.loadImage(path)
     end
 end
 
+---Draws a pixel on the screen
+---@param x number
+---@param y number
+---@param color number|nil
 function funcs.drawPixel(x, y, color)
     expect(1, x, "number")
     expect(2, y, "number")
@@ -58,6 +69,12 @@ function funcs.drawPixel(x, y, color)
     internalDrawPixel(x, y)
 end
 
+---Draws a line on the screen
+---@param x1 number
+---@param y1 number
+---@param x2 number
+---@param y2 number
+---@param color number|nil
 function funcs.drawLine(x1, y1, x2, y2, color)
     expect(1, x1, "number")
     expect(2, y1, "number")
@@ -96,6 +113,12 @@ function funcs.drawLine(x1, y1, x2, y2, color)
     end
 end
 
+---Draws a box outline on the screen
+---@param x1 number
+---@param y1 number
+---@param x2 number
+---@param y2 number
+---@param color number|nil
 function funcs.drawBox(x1, y1, x2, y2, color)
     expect(1, x1, "number")
     expect(2, y1, "number")
@@ -118,6 +141,12 @@ function funcs.drawBox(x1, y1, x2, y2, color)
     funcs.drawLine(x1, y1, x1, y2)
 end
 
+---Draws a box on the screen
+---@param x1 number
+---@param y1 number
+---@param x2 number
+---@param y2 number
+---@param color number|nil
 function funcs.drawFilledBox(x1, y1, x2, y2, color)
     expect(1, x1, "number")
     expect(2, y1, "number")
@@ -139,6 +168,10 @@ function funcs.drawFilledBox(x1, y1, x2, y2, color)
     end
 end
 
+---Draws an image on the screen
+---@param image table
+---@param xPos number
+---@param yPos number
 function funcs.drawImage(image, xPos, yPos)
     expect(1, image, "table")
     expect(2, xPos, "number")

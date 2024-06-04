@@ -1,8 +1,11 @@
 local native = peripheral
 local sides = rs.getSides()
 
+---@class peripheral
 local funcs = {}
 
+---Returns available peripherals
+---@return string[]
 function funcs.getAvailable()
     local results = {}
 
@@ -24,6 +27,9 @@ function funcs.getAvailable()
 end
 funcs.getNames = funcs.getAvailable
 
+---Checks if a peripheral is present
+---@param name string
+---@return boolean
 function funcs.isPresent(name)
     expect(1, name, 'string')
 
@@ -39,6 +45,9 @@ function funcs.isPresent(name)
     return false
 end
 
+---Gets the peripheral type
+---@param peripheral string|peripheral
+---@return string|nil
 function funcs.getType(peripheral)
     expect(1, peripheral, 'string', 'table')
 
@@ -65,6 +74,10 @@ function funcs.getType(peripheral)
     end
 end
 
+---Checks whether a peripheral is a specific type
+---@param peripheral string|peripheral
+---@param _type string
+---@return boolean|nil
 function funcs.isType(peripheral, _type)
     expect(1, peripheral, "string", "table")
     expect(2, _type, "string")
@@ -91,6 +104,9 @@ function funcs.isType(peripheral, _type)
 end
 funcs.hasType = funcs.isType
 
+---Gets a peripheral's methods
+---@param name string
+---@return table|nil
 function funcs.getMethods(name)
     expect(1, name ,'string')
 
@@ -105,6 +121,9 @@ function funcs.getMethods(name)
     end
 end
 
+---Gets the name of a peripheral
+---@param peripheral peripheral
+---@return string
 function funcs.getName(peripheral)
     expect(1, peripheral, "table")
 
@@ -117,6 +136,11 @@ function funcs.getName(peripheral)
     return mtable.name
 end
 
+---Calls a peripheral with a method
+---@param name string
+---@param method string
+---@param ... unknown
+---@return any
 function funcs.call(name, method, ...)
     expect(1, name, "string")
     expect(2, method, "string")
@@ -132,6 +156,9 @@ function funcs.call(name, method, ...)
     end
 end
 
+---Wraps a peripheral into a table
+---@param name string
+---@return peripheral|nil
 function funcs.wrap(name)
     expect(1, name, "string")
 
@@ -161,6 +188,10 @@ function funcs.wrap(name)
     return result
 end
 
+---Finds all peripherals of a type
+---@param _type string
+---@param filter function
+---@return peripheral
 function funcs.find(_type, filter)
     expect(1, _type, "string")
     expect(2, filter, "function", "nil")
@@ -175,6 +206,7 @@ function funcs.find(_type, filter)
             end
         end
     end
+
     return table.unpack(results)
 end
 
