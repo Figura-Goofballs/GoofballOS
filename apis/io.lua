@@ -6,6 +6,8 @@ local i, o = native_io.stdin, native_io.stdout
 local function is_none(...)
     return select("#", ...) == 0
 end
+assert(is_none())
+assert(not is_none(nil))
 --}}}
 --{{{ opening files
 function io.open(f, m)
