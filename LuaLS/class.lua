@@ -10,6 +10,31 @@ function httpResponse.getResponseCode() return '',1 end
 ---@return table
 function httpResponse.getResponseHeaders() return {} end
 
+---Read a number of bytes
+---@param byteCount? number
+---@return nil|number|string
+function httpResponse.read(byteCount) end
+
+---Read every byte
+---@return nil|string
+function httpResponse.readAll() end
+
+---Read 1 line
+---@param withNewline boolean
+---@return nil|string
+function httpResponse.readLine(withNewline) end
+
+---Close, freeing any used resources
+function httpResponse.close() end
+
+---Seek to a new position within the response,
+---@param whence string
+---@param offset number
+---@return number|nil
+---@return string|nil
+function httpResponse.seek(whence, offset) end
+
+
 ---@class http.Websocket
 local httpWebsocket = {}
 

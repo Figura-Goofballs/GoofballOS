@@ -57,7 +57,7 @@ end
 ---Wraps an HTTP request
 ---@param url string
 ---@param ... unknown
----@return string|nil
+---@return http.Response|nil
 ---@return string|nil
 ---@return http.Response|nil
 local function wrapRequest(url, ...)
@@ -82,7 +82,7 @@ end
 ---@param url http.Url
 ---@param headers table|nil
 ---@param binary boolean|nil
----@return string|nil
+---@return http.Response|nil
 ---@return string|nil
 ---@return http.Response|nil
 function funcs.get(url, headers, binary)
@@ -104,7 +104,7 @@ end
 ---@param post string
 ---@param headers table|nil
 ---@param binary boolean|nil
----@return string|nil
+---@return http.Response|nil
 ---@return string|nil
 ---@return http.Response|nil
 function funcs.post(url, post, headers, binary)
@@ -192,6 +192,7 @@ function funcs.websocketAsync(url, headers)
         os.queueEvent("websocket_failure", url, err)
     end
 
+---@diagnostic disable-next-line: return-type-mismatch
     return ok, err
 end
 
