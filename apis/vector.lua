@@ -7,9 +7,9 @@ function vector.add(self, other)
     if getmetatable(other) ~= vmetatable then expect(2, other, "vector") end
 
     return vector.new(
-        self.x + o.x,
-        self.y + o.y,
-        self.z + o.z
+        self.x + other.x,
+        self.y + other.y,
+        self.z + other.z
     )
 end
 
@@ -18,10 +18,10 @@ function vector.sub(self, other)
     if getmetatable(other) ~= vmetatable then expect(2, other, "vector") end
 
     return vector.new(
-        self.x - o.x,
-        self.y - o.y,
-        self.z - o.z
-    )
+        self.x - other.x,
+        self.y - other.y,
+        self.z - other.z
+)
 end
 
 function vector.mul(self, factor)
@@ -59,7 +59,7 @@ function vector.dot(self, other)
     if getmetatable(self) ~= vmetatable then expect(1, self, "vector") end
     if getmetatable(other) ~= vmetatable then expect(2, other, "vector") end
 
-    return self.x * o.x + self.y * o.y + self.z * o.z
+    return self.x * other.x + self.y * other.y + self.z * other.z
 end
 
 function vector.cross(self, other)
@@ -67,9 +67,9 @@ function vector.cross(self, other)
     if getmetatable(other) ~= vmetatable then expect(2, other, "vector") end
 
     return vector.new(
-        self.y * o.z - self.z * o.y,
-        self.z * o.x - self.x * o.z,
-        self.x * o.y - self.y * o.x
+        self.y * other.z - self.z * other.y,
+        self.z * other.x - self.x * other.z,
+        self.x * other.y - self.y * other.x
     )
 end
 

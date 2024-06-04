@@ -53,8 +53,7 @@ function _term.write(text)
 end
 
 function _term.clear()
-    print(native_term or 'test')
-    print('tset')
+    redirectTarget.clear()
     if mirror then
         native_term.clear()
     end

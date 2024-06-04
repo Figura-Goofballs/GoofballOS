@@ -32,7 +32,7 @@ function funcs.execute(self, func, ...)
     func(...)
 end
 
-function funcs.run(self, program, args, ...)
+function funcs.run(self, program, env, args, ...)
     if type(args) ~= "table" then
         args = {args, ...}
     end
@@ -40,9 +40,9 @@ function funcs.run(self, program, args, ...)
     local func
     if type(program) == "string" then
         if self.PATH[program] then
-            func = assert(loadfile(self.PATH[program], "t", _ENV))
+            func = assert(loadfile(self.PATH[program], "t", env))
         elseif fs.exists(self.shellDir:gsub("%/$", "") .. "/" .. program .. ".lua") then
-            func = assert(loadfile(self.shellDir:gsub("%/$", "") .. "/" .. program), "t", _ENV)
+            func = assert(loadfile(self.shellDir:gsub("%/$", "") .. "/" .. program), "t", env)
         else
             error("___NO_FILE___")
         end
@@ -94,6 +94,7 @@ local shellToReturn = {
 
         new.shellDir = "/home/user"
         new.PATH = {}
+        new.vars = {}
 
         if fs.exists('/bin') then
             for k, v in pairs(fs.list("/bin")) do
@@ -101,20 +102,17 @@ local shellToReturn = {
                     new.PATH[v:gsub(".lua$", "")] = "/bin/" .. v
                     print("Adding " .. v .. " to path")
                 end
-                sleep(0)
             end
         end
 
         if fs.exists('/rom/bin') then
             for k, v in pairs(fs.list("/rom/bin")) do
                 if not v:find("/") then
-                    new.PATH[v:gsub(".lua$", "")] = "/bin/" .. v
+                    new.PATH[v:gsub(".lua$", "")] = "/rom/bin/" .. v
                     print("Adding " .. v .. " to path")
                 end
-                sleep(0)
             end
         end
-
         return new
     end
 }

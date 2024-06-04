@@ -1,0 +1,32 @@
+name: Compile datapack
+
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+
+    - name: Setup node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+
+    - name: Install luamin
+      run: npm install -g luamin
+
+    - name: Compile datapack
+      run: ./datapack-compile.sh
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: datapack
+        path: ./out/*
