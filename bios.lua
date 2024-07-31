@@ -89,6 +89,7 @@ end
 
 keys = _require("/enums/keys")
 colors = _require('/enums/colors')
+io = _require("/apis/io")
 fs = _require("/apis/fs")
 term = _require("/apis/term")
 paintutils = _require("/apis/paintutils")
@@ -337,6 +338,30 @@ os.sleep = sleep
 
 local pEvent = os.pullEvent
 os.pullEvent = os.pullEventRaw
+
+print "POST…" do
+    local f = assert(io.open(".postwork", "w"))
+    f:write "1"
+    local o = assert(io.output())
+    -- test nulling
+    -- assert(not io.output(nil)) -- can't figure this out
+    -- assert(io.output() == nil)
+    -- assert(not pcall(io.write, "BAD"))
+    io.output(f)
+    assert(io.output() == f)
+    io.write "2"
+    f:close()
+    -- assert(io.output() == nil)
+    io.output(o)
+    f = assert(io.open ".postwork")
+    o = io.input()
+    io.input(f)
+    assert(io.input() == f)
+    assert(io.read "*l" == "12")
+    assert(not io.read(0))
+    f:close()
+    io.input(o)
+end
 
 ::passwordInput::
 term.clear()
