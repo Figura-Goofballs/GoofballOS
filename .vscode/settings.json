@@ -4,6 +4,7 @@
         "lowercase-global"
     ],
     "Lua.diagnostics.globals": [
+        "turtle",
         "shell"
     ]
 }

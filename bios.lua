@@ -222,7 +222,7 @@ function read(replChar, history, completionFunc, default, maxLength)
                     inText = inText:gsub(".$", "")
                     whitespaceCount = whitespaceCount + 1
                 end
-            elseif param == keys.up then
+            elseif historyIter and param == keys.up then
                 if historyIter == 0 then
                     history[0] = inText
                 end
@@ -241,7 +241,7 @@ function read(replChar, history, completionFunc, default, maxLength)
                 end
 
                 inText = history[historyIter]
-            elseif param == keys.down then
+            elseif historyIter and param == keys.down then
                 if historyIter then
                     historyIter = historyIter - 1
                 end
@@ -434,6 +434,7 @@ end
 local iter = 0
 local bootOpts = {}
 
+
 local loaderName = "GoofyBOOT"
 
 local width, height = term.getSize()
@@ -455,7 +456,12 @@ end
 term.setCursorPos(4, height - 2)
 write("boot option: ")
 
-local option = tonumber(read())
+local option
+if #bootOpts == 1 then
+    option = 1
+else
+    option = tonumber(read())
+end
 
 if not option or not bootOpts[option] then
     goto askForBootOption
